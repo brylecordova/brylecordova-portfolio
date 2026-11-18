@@ -1,0 +1,2108 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bryle Cordova | Freelance Web & Systems Developer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        obsidian: '#06080f',
+                        surface: '#0d1220',
+                        card: '#111827',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #06080f;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #06080f;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #38bdf8;
+        }
+        .cyber-grid {
+            background-size: 44px 44px;
+            background-image:
+                linear-gradient(to right, rgba(56, 189, 248, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
+        }
+        .glass-panel {
+            background: rgba(13, 18, 32, 0.78);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(148, 163, 184, 0.14);
+            box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.8);
+        }
+        .spotlight-card {
+            position: relative;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+        .spotlight-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: radial-gradient(450px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(56, 189, 248, 0.45), rgba(167, 139, 250, 0.15), transparent 65%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .spotlight-card:hover::before {
+            opacity: 1;
+        }
+        .playground-node {
+            touch-action: none;
+            user-select: none;
+            will-change: transform;
+        }
+        .playground-node.is-dragging {
+            z-index: 48 !important;
+            cursor: grabbing !important;
+            box-shadow: 0 25px 65px -12px rgba(56, 189, 248, 0.4), 0 0 0 1px rgba(56, 189, 248, 0.6) !important;
+        }
+        .node-port {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+        .node-port:hover,
+        .link-mode-active .node-port {
+            transform: scale(1.35);
+            box-shadow: 0 0 14px rgba(56, 189, 248, 0.9);
+        }
+        .link-mode-active .playground-node {
+            outline: 1px dashed rgba(56, 189, 248, 0.45);
+            outline-offset: 4px;
+        }
+        .node-selected-source {
+            box-shadow: 0 0 0 2px #38bdf8, 0 0 30px rgba(56, 189, 248, 0.45) !important;
+        }
+        @keyframes dashFlow {
+            to {
+                stroke-dashoffset: -36;
+            }
+        }
+        .cable-path {
+            stroke-dasharray: 10 8;
+            animation: dashFlow 1.1s linear infinite;
+            pointer-events: stroke;
+            cursor: pointer;
+            transition: stroke-width 0.2s ease, filter 0.2s ease;
+        }
+        .cable-path:hover {
+            stroke-width: 4.5;
+            filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.9));
+        }
+        @keyframes screenShake {
+            0%, 100% { transform: translate3d(0, 0, 0); }
+            15% { transform: translate3d(-6px, 5px, 0); }
+            30% { transform: translate3d(6px, -4px, 0); }
+            45% { transform: translate3d(-5px, -3px, 0); }
+            60% { transform: translate3d(5px, 4px, 0); }
+            75% { transform: translate3d(-3px, 2px, 0); }
+        }
+        .shake-impact {
+            animation: screenShake 0.36s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-7px); }
+        }
+        .float-badge {
+            animation: floatSlow 4.5s ease-in-out infinite;
+        }
+        .dock-item {
+            transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.2s ease, color 0.2s ease;
+        }
+        .modal-backdrop {
+            background: rgba(3, 5, 10, 0.84);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="cyber-grid selection:bg-sky-400 selection:text-slate-950">
+    <canvas id="bgCanvas" class="fixed inset-0 w-full h-full pointer-events-none z-0"></canvas>
+    <svg id="cableSvg" class="fixed inset-0 w-full h-full pointer-events-none z-30"></svg>
+
+    <div id="cursorAura" class="fixed w-80 h-80 rounded-full pointer-events-none z-0 -translate-x-1/2 -translate-y-1/2 opacity-40 blur-3xl transition-opacity duration-300" style="background: radial-gradient(circle, rgba(56,189,248,0.22) 0%, rgba(167,139,250,0.08) 50%, transparent 75%);"></div>
+
+    <div class="fixed top-4 left-4 z-40 hidden sm:flex items-center gap-2.5 px-3.5 py-2 rounded-full glass-panel text-xs font-mono text-slate-300">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        <span>PLAYGROUND //</span>
+        <span id="playgroundStatus" class="text-sky-400 font-semibold">FREE DRAG & LINK</span>
+    </div>
+
+    <div class="fixed top-4 right-4 z-40 flex flex-wrap items-center justify-end gap-2">
+        <button id="cmdTriggerBtn" class="px-3 py-2 rounded-full glass-panel hover:border-sky-400/60 text-xs font-mono text-slate-200 flex items-center gap-2 transition-all hover:scale-105 active:scale-95">
+            <i class="ri-terminal-box-line text-sky-400"></i>
+            <span class="hidden md:inline">Command</span>
+            <kbd class="px-1.5 py-0.5 text-[10px] rounded bg-slate-800 text-sky-300 border border-slate-700">Ctrl K</kbd>
+        </button>
+
+        <button id="linkModeBtn" class="px-3 py-2 rounded-full glass-panel hover:border-sky-400/60 text-xs font-mono text-slate-200 flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95" title="Connect cards with neon data cables">
+            <i class="ri-node-tree text-sky-400"></i>
+            <span>Link Cables</span>
+            <span id="cableCountBadge" class="px-1.5 py-0.2 rounded-full bg-sky-500/20 text-sky-300 text-[10px]">0</span>
+        </button>
+
+        <button id="heavyDropBtn" class="px-3 py-2 rounded-full glass-panel hover:border-amber-400/60 text-xs font-mono text-slate-200 flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95" title="Activate heavy rigid-body gravity drop (Key: G)">
+            <i class="ri-meteor-line text-amber-400"></i>
+            <span>Heavy Drop</span>
+        </button>
+
+        <button id="shockwaveBtn" class="px-3 py-2 rounded-full glass-panel hover:border-violet-400/60 text-xs font-mono text-slate-200 flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95" title="Trigger radial shockwave impulse">
+            <i class="ri-radar-line text-violet-400"></i>
+            <span class="hidden sm:inline">Shockwave</span>
+        </button>
+
+        <button id="resetPlaygroundBtn" class="px-3 py-2 rounded-full glass-panel hover:border-emerald-400/60 text-xs font-mono text-slate-200 flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95" title="Restore original layout & clear cables">
+            <i class="ri-refresh-line text-emerald-400"></i>
+            <span>Reset</span>
+        </button>
+    </div>
+
+    <aside id="minimapRail" class="fixed right-3 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-end gap-3">
+        <a href="#hero" data-rail="hero" class="rail-dot group flex items-center gap-2.5">
+            <span class="opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all text-[11px] font-mono px-2 py-0.5 rounded bg-slate-900/90 border border-slate-700 text-sky-300">01. Identity</span>
+            <span class="w-2.5 h-2.5 rounded-full bg-slate-600 group-hover:bg-sky-400 transition-all"></span>
+        </a>
+        <a href="#systems" data-rail="systems" class="rail-dot group flex items-center gap-2.5">
+            <span class="opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all text-[11px] font-mono px-2 py-0.5 rounded bg-slate-900/90 border border-slate-700 text-sky-300">02. Live Systems</span>
+            <span class="w-2.5 h-2.5 rounded-full bg-slate-600 group-hover:bg-sky-400 transition-all"></span>
+        </a>
+        <a href="#repos" data-rail="repos" class="rail-dot group flex items-center gap-2.5">
+            <span class="opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all text-[11px] font-mono px-2 py-0.5 rounded bg-slate-900/90 border border-slate-700 text-sky-300">03. GitHub Repos</span>
+            <span class="w-2.5 h-2.5 rounded-full bg-slate-600 group-hover:bg-sky-400 transition-all"></span>
+        </a>
+        <a href="#skills" data-rail="skills" class="rail-dot group flex items-center gap-2.5">
+            <span class="opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all text-[11px] font-mono px-2 py-0.5 rounded bg-slate-900/90 border border-slate-700 text-sky-300">04. Tech Stack</span>
+            <span class="w-2.5 h-2.5 rounded-full bg-slate-600 group-hover:bg-sky-400 transition-all"></span>
+        </a>
+        <a href="#experience" data-rail="experience" class="rail-dot group flex items-center gap-2.5">
+            <span class="opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all text-[11px] font-mono px-2 py-0.5 rounded bg-slate-900/90 border border-slate-700 text-sky-300">05. Experience</span>
+            <span class="w-2.5 h-2.5 rounded-full bg-slate-600 group-hover:bg-sky-400 transition-all"></span>
+        </a>
+        <a href="#contact" data-rail="contact" class="rail-dot group flex items-center gap-2.5">
+            <span class="opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all text-[11px] font-mono px-2 py-0.5 rounded bg-slate-900/90 border border-slate-700 text-sky-300">06. Direct Ping</span>
+            <span class="w-2.5 h-2.5 rounded-full bg-slate-600 group-hover:bg-sky-400 transition-all"></span>
+        </a>
+    </aside>
+
+    <main id="playgroundStage" class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-36 space-y-28">
+        <section id="hero" class="scroll-section pt-4">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-mono">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            AVAILABLE FOR FREELANCE & CUSTOM SYSTEMS
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700/70 text-slate-300 text-xs font-mono">
+                            <i class="ri-map-pin-2-fill text-sky-400"></i>
+                            Butuan City, PH 8600
+                        </span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <p class="font-mono text-sm text-sky-400 tracking-wider uppercase">&lt;FullStack &amp; EmbeddedSystemsArchitect /&gt;</p>
+                        <h1 class="font-display text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.06]">
+                            Bryle <span class="bg-gradient-to-r from-sky-400 via-cyan-300 to-violet-400 bg-clip-text text-transparent">Cordova</span>
+                        </h1>
+                        <p class="text-lg sm:text-xl text-slate-300 font-medium max-w-2xl leading-relaxed">
+                            Freelance Web &amp; Systems Developer building tailored <span class="text-sky-300 font-semibold">POS, Inventory, HRIS, Document &amp; Medical Records Systems</span>, plus <span class="text-violet-300 font-semibold">Arduino, Raspberry Pi &amp; OpenCV</span> solutions.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-3 pt-1">
+                        <a href="#systems" class="px-5 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-cyan-400 text-slate-950 font-bold text-sm flex items-center gap-2 shadow-lg shadow-sky-500/25 hover:brightness-110 transition-all hover:-translate-y-0.5">
+                            <i class="ri-window-fill text-base"></i>
+                            Launch Interactive Demos
+                        </a>
+                        <a href="https://wa.me/639274988152" target="_blank" rel="noopener noreferrer" class="px-4 py-3 rounded-xl glass-panel hover:border-emerald-400/60 text-emerald-300 font-semibold text-sm flex items-center gap-2 transition-all hover:-translate-y-0.5">
+                            <i class="ri-whatsapp-fill text-lg"></i>
+                            WhatsApp
+                        </a>
+                        <a href="https://t.me/+639274988152" target="_blank" rel="noopener noreferrer" class="px-4 py-3 rounded-xl glass-panel hover:border-sky-400/60 text-sky-300 font-semibold text-sm flex items-center gap-2 transition-all hover:-translate-y-0.5">
+                            <i class="ri-telegram-fill text-lg"></i>
+                            Telegram
+                        </a>
+                        <a href="https://github.com/brylecordova" target="_blank" rel="noopener noreferrer" class="p-3 rounded-xl glass-panel hover:border-slate-400 text-slate-200 transition-all hover:-translate-y-0.5" aria-label="GitHub">
+                            <i class="ri-github-fill text-lg"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/bryle-cordova-370641177" target="_blank" rel="noopener noreferrer" class="p-3 rounded-xl glass-panel hover:border-sky-400 text-sky-400 transition-all hover:-translate-y-0.5" aria-label="LinkedIn">
+                            <i class="ri-linkedin-box-fill text-lg"></i>
+                        </a>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2.5 pt-2">
+                        <div data-node-id="chip-laravel" class="playground-node float-badge cursor-grab px-3.5 py-2 rounded-xl glass-panel border-rose-500/30 text-xs font-mono text-rose-300 flex items-center gap-2">
+                            <span class="node-port w-2.5 h-2.5 rounded-full bg-rose-400 cursor-crosshair" data-port="chip-laravel"></span>
+                            <i class="ri-shield-keyhole-fill text-rose-400"></i> Laravel Sanctum
+                        </div>
+                        <div data-node-id="chip-vue" style="animation-delay: 0.7s;" class="playground-node float-badge cursor-grab px-3.5 py-2 rounded-xl glass-panel border-emerald-500/30 text-xs font-mono text-emerald-300 flex items-center gap-2">
+                            <span class="node-port w-2.5 h-2.5 rounded-full bg-emerald-400 cursor-crosshair" data-port="chip-vue"></span>
+                            <i class="ri-vuejs-fill text-emerald-400"></i> Vue.js + TypeScript
+                        </div>
+                        <div data-node-id="chip-react" style="animation-delay: 1.4s;" class="playground-node float-badge cursor-grab px-3.5 py-2 rounded-xl glass-panel border-sky-500/30 text-xs font-mono text-sky-300 flex items-center gap-2">
+                            <span class="node-port w-2.5 h-2.5 rounded-full bg-sky-400 cursor-crosshair" data-port="chip-react"></span>
+                            <i class="ri-reactjs-fill text-sky-400"></i> React + Node.js
+                        </div>
+                        <div data-node-id="chip-iot" style="animation-delay: 2.1s;" class="playground-node float-badge cursor-grab px-3.5 py-2 rounded-xl glass-panel border-violet-500/30 text-xs font-mono text-violet-300 flex items-center gap-2">
+                            <span class="node-port w-2.5 h-2.5 rounded-full bg-violet-400 cursor-crosshair" data-port="chip-iot"></span>
+                            <i class="ri-cpu-fill text-violet-400"></i> Arduino / RPi / OpenCV
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 space-y-5">
+                    <div data-node-id="card-profile" class="playground-node spotlight-card glass-panel rounded-3xl p-6 cursor-grab relative">
+                        <button type="button" data-port="card-profile" title="Click or drag to connect cable" class="node-port absolute -top-2 -right-2 w-4 h-4 rounded-full bg-sky-400 border-2 border-slate-950 cursor-crosshair z-20"></button>
+                        <div class="flex items-center gap-4">
+                            <div class="relative shrink-0">
+                                <div class="w-20 h-20 rounded-2xl overflow-hidden ring-2 ring-sky-400/50 shadow-lg shadow-sky-500/20 bg-slate-900">
+                                    <img src="https://avatars.githubusercontent.com/brylecordova" onerror="this.onerror=null;this.src='https://placehold.co/160x160/0f172a/38bdf8?text=BC';" alt="Bryle Cordova" class="w-full h-full object-cover pointer-events-none">
+                                </div>
+                                <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-400 border-2 border-slate-950 flex items-center justify-center text-[10px] text-slate-950 font-bold">
+                                    <i class="ri-check-line"></i>
+                                </span>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <h2 class="font-display font-bold text-xl text-white truncate">Bryle Cordova</h2>
+                                    <span class="px-2 py-0.5 rounded bg-sky-500/15 text-sky-300 font-mono text-[10px]">@brylecordova</span>
+                                </div>
+                                <p class="text-xs text-slate-400 mt-0.5">BS Information Technology • ACLC College</p>
+                                <p class="text-xs font-mono text-emerald-400 mt-1.5 flex items-center gap-1.5">
+                                    <i class="ri-phone-fill"></i> +63 927 498 8152 (WA / TG)
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2.5 mt-5 pt-5 border-t border-slate-800/80 text-center">
+                            <div class="p-2.5 rounded-xl bg-slate-900/70">
+                                <div class="font-display font-bold text-lg text-sky-400">6+</div>
+                                <div class="text-[11px] font-mono text-slate-400">Core Systems</div>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-900/70">
+                                <div class="font-display font-bold text-lg text-emerald-400">Full</div>
+                                <div class="text-[11px] font-mono text-slate-400">Stack &amp; IoT</div>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-900/70">
+                                <div class="font-display font-bold text-lg text-violet-400">3+ Yrs</div>
+                                <div class="text-[11px] font-mono text-slate-400">Gov IT Exp</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div data-node-id="card-terminal" class="playground-node spotlight-card glass-panel rounded-3xl overflow-hidden cursor-grab relative">
+                        <button type="button" data-port="card-terminal" title="Click or drag to connect cable" class="node-port absolute -top-2 -left-2 w-4 h-4 rounded-full bg-emerald-400 border-2 border-slate-950 cursor-crosshair z-20"></button>
+                        <div class="px-4 py-2.5 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                                <span class="ml-2 text-[11px] font-mono text-slate-400">bryle@playground:~</span>
+                            </div>
+                            <span class="text-[10px] font-mono text-sky-400">DRAG / LINK / DROP</span>
+                        </div>
+                        <div id="terminalLog" class="p-4 font-mono text-xs space-y-1.5 max-h-40 overflow-y-auto text-slate-300">
+                            <div class="text-emerald-400">$ whoami --freelance</div>
+                            <div>&gt; Custom POS, HRIS, Inventory, DMS, EMR &amp; Robotics Developer</div>
+                            <div class="text-sky-400">$ hint --physics</div>
+                            <div>&gt; Drag any card, click ports to wire cables, or press [G] for Heavy Drop!</div>
+                        </div>
+                        <form id="terminalForm" class="px-4 py-2.5 bg-slate-950/80 border-t border-slate-800/80 flex items-center gap-2">
+                            <span class="text-emerald-400 font-mono text-xs">$</span>
+                            <input id="terminalInput" type="text" placeholder="Type help, drop, shock, repos, hire..." class="w-full bg-transparent text-xs font-mono text-white focus:outline-none placeholder:text-slate-600">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="systems" class="scroll-section space-y-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 text-xs font-mono text-sky-400 uppercase tracking-widest mb-2">
+                        <i class="ri-apps-2-fill"></i> Freelance Portfolio &amp; Live Iframe Sandboxes
+                    </div>
+                    <h2 class="font-display text-3xl sm:text-4xl font-bold text-white">Custom Business &amp; IoT Systems</h2>
+                </div>
+                <p class="text-sm text-slate-400 max-w-md">
+                    Click <span class="text-sky-300 font-mono">Live Demo</span> on any system to launch an interactive, working mini-app inside a stylized browser iframe.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <article data-node-id="sys-pos" class="playground-node spotlight-card glass-panel rounded-3xl overflow-hidden flex flex-col cursor-grab relative group">
+                    <button type="button" data-port="sys-pos" class="node-port absolute top-3 right-3 w-3.5 h-3.5 rounded-full bg-sky-400 border-2 border-slate-950 cursor-crosshair z-20"></button>
+                    <div class="relative h-44 bg-gradient-to-br from-sky-950 via-slate-900 to-slate-950 p-4 border-b border-slate-800/80 overflow-hidden">
+                        <div class="w-full h-full rounded-xl bg-slate-950/90 border border-sky-500/30 p-3 flex flex-col justify-between group-hover:scale-[1.03] transition-transform">
+                            <div class="flex items-center justify-between text-[10px] font-mono text-sky-300">
+                                <span>POS_TERMINAL_V4</span>
+                                <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">ONLINE</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 my-1">
+                                <div class="p-2 rounded bg-slate-900 border border-slate-800 text-[10px] font-mono text-slate-300">Espresso<br><span class="text-sky-400">₱120</span></div>
+                                <div class="p-2 rounded bg-slate-900 border border-slate-800 text-[10px] font-mono text-slate-300">Matcha<br><span class="text-sky-400">₱145</span></div>
+                                <div class="p-2 rounded bg-slate-900 border border-slate-800 text-[10px] font-mono text-slate-300">Croissant<br><span class="text-sky-400">₱95</span></div>
+                            </div>
+                            <div class="flex items-center justify-between text-[11px] font-mono bg-sky-500/15 px-2.5 py-1 rounded text-sky-200">
+                                <span>TOTAL RECEIPT</span>
+                                <span class="font-bold">₱360.00</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex items-center gap-2 text-xs font-mono text-sky-400 mb-1">
+                                <i class="ri-store-3-fill"></i> Retail &amp; Hospitality
+                            </div>
+                            <h3 class="font-display font-bold text-xl text-white">Point of Sale (POS) System</h3>
+                            <p class="text-sm text-slate-400 mt-2 leading-relaxed">
+                                Fast barcode checkout, split payments, thermal receipt printing, shift Z-reading reports, and real-time cash drawer auditing for local businesses.
+                            </p>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex flex-wrap gap-1.5 text-[11px] font-mono">
+                                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">Laravel</span>
+                                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">Vue.js</span>
+                                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">MySQL</span>
+                            </div>
+                            <button type="button" onclick="openSystemDemo('pos')" class="w-full py-2.5 px-4 rounded-xl bg-sky-500/15 hover:bg-sky-500 text-sky-300 hover:text-slate-950 border border-sky-500/30 font-semibold text-xs font-mono flex items-center justify-center gap-2 transition-all">
+                                <i class="ri-play-circle-fill text-base"></i> Live Demo (Iframe)
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <article data-node-id="sys-inv" class="playground-node spotlight-card glass-panel rounded-3xl overflow-hidden flex flex-col cursor-grab relative group">
+                    <button type="button" data-port="sys-inv" class="node-port absolute top-3 right-3 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-slate-950 cursor-crosshair z-20"></button>
+                    <div class="relative h-44 bg-gradient-to-br from-emerald-950 via-slate-900 to-slate-950 p-4 border-b border-slate-800/80 overflow-hidden">
+                        <div class="w-full h-full rounded-xl bg-slate-950/90 border border-emerald-500/30 p-3 flex flex-col justify-between group-hover:scale-[1.03] transition-transform">
+                            <div class="flex items-center justify-between text-[10px] font-mono text-emerald-300">
+                                <span>STOCK_MATRIX_SYNC</span>
+                                <span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">2 LOW ALERTS</span>
+                            </div>
+                            <div class="space-y-1.5 text-[10px] font-mono">
+                                <div class="flex justify-between items-center bg-slate-900 px-2 py-1 rounded">
+                                    <span class="text-slate-300">SKU-104 Router</span>
+                                    <span class="text-emerald-400">84 units</span>
+                                </div>
+                                <div class="flex justify-between items-center bg-slate-900 px-2 py-1 rounded">
+                                    <span class="text-slate-300">SKU-209 Thermal Paper</span>
+                                    <span class="text-rose-400">4 rolls !</span>
+                                </div>
+                            </div>
+                            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-emerald-400 h-full w-4/5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex items-center gap-2 text-xs font-mono text-emerald-400 mb-1">
+                                <i class="ri-archive-drawer-fill"></i> Supply &amp; Warehouse
+                            </div>
+                            <h3 class="font-display font-bold text-xl text-white">Inventory Management System</h3>
+                            <p class="text-sm text-slate-400 mt-2 leading-relaxed">
+                                Multi-branch stock ledger, automated low-stock thresholds, supplier purchase orders, batch expiry tracking, and valuation analytics.
+                            </p>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex flex-wrap gap-1.5 text-[11px] font-mono">
+                                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">PHP</span>
+                                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">Ajax</span>
+                                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">MySQL</span>
+                            </div>
+                            <button type="button" onclick="openSystemDemo('inventory')" class="w-full py-2.5 px-4 rounded-xl bg-emerald-500/15 hover:bg-emerald-500 text-emerald-300 hover:text-slate-950 border border-emerald-500/30 font-semibold text-xs font-mono flex items-center justify-center gap-2 transition-all">
+                                <i class="ri-play-circle-fill text-base"></i> Live Demo (Iframe)
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <article data-node-id="sys-hris" class="playground-node spotlight-card glass-panel rounded-3xl overflow-hidden flex flex-col cursor-grab relative group">
+                    <button type="button" data-port="sys-hris" class="node-port absolute top-3 right-3 w-3.5 h-3.5 rounded-full bg-violet-400 border-2 border-slate-950 cursor-crosshair z-20"></button>
+                    <div class="relative h-44 bg-gradient-to-br from-violet-950 via-slate-900 to-slate-950 p-4 border-b border-slate-800/80 overflow-hidden">
+                        <div class="w-full h-full rounded-xl bg-slate-950/90 border border-violet-500/30 p-3 flex flex-col justify-between group-hover:scale-[1.03] transition-transform">
+                            <div class="flex items-center justify-between text-[10px] font-mono text-violet-300">
+                                <span>HRIS_PAYROLL_CORE</span>
+                                <span class="px-1.5 py-0.5 rounded bg-violet-500/20 text-violet-300">DTR SYNCED</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-[10px] font-mono">
+                                <div class="p-2 rounded bg-slate-900 border border-slate-800">
+                                    <div class="text-slate-400">Active Staff</div>
+                                    <div class="text-white font-bold text-sm">48 / 50</div>
+                                </div>
+                                <div class="p-2 rounded bg-slate-900 border border-slate-800">
+                                    <div class="text-slate-400">Cut-off Net</div>
+                                    <div class="text-emerald-400 font-bold text-sm">₱412.8k</div>
+                                </div>
+                            </div>
+                            <div class="text-[10px] font-mono text-slate-400 flex justify-between">
+                                <span>SSS • PhilHealth • Pag-IBIG</span>
+                                <span class="text-violet-300">Auto-Computed</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex items-center gap-2 text-xs font-mono text-violet-400 mb-1">
+                                <i class="ri-team-fill"></i> Workforce &amp; Payroll
+                            </div>
+                            <h3 class="font-display font-bold text-xl text-white">Human Resource Info System (HRIS)</h3>
+                            <p class="text-sm text-slate-400 mt-2 leading-relaxed">
+                                Biometric DTR logs, leave credit management, automated statutory deductions, payslip generation, and 201 employee digital files.
+                            </p>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex flex-wrap gap-1.5 text-[11px] font-mono">
+                                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">Laravel Sanctum</span>
+                                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">React</span>
+                                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">MySQL</span>
+                            </div>
+                            <button type="button" onclick="openSystemDemo('hris')" class="w-full py-2.5 px-4 rounded-xl bg-violet-500/15 hover:bg-violet-500 text-violet-300 hover:text-slate-950 border border-violet-500/30 font-semibold text-xs font-mono flex items-center justify-center gap-2 transition-all">
+                                <i class="ri-play-circle-fill text-base"></i> Live Demo (Iframe)
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <article data-node-id="sys-dms" class="playground-node spotlight-card glass-panel rounded-3xl overflow-hidden flex flex-col cursor-grab relative group">
+                    <button type="button" data-port="sys-dms" class="node-port absolute top-3 right-3 w-3.5 h-3.5 rounded-full bg-amber-400 border-2 border-slate-950 cursor-crosshair z-20"></button>
+                    <div class="relative h-44 bg-gradient-to-br from-amber-950 via-slate-900 to-slate-950 p-4 border-b border-slate-800/80 overflow-hidden">
+                        <div class="w-full h-full rounded-xl bg-slate-950/90 border border-amber-500/30 p-3 flex flex-col justify-between group-hover:scale-[1.03] transition-transform">
+                            <div class="flex items-center justify-between text-[10px] font-mono text-amber-300">
+                                <span>DOC_ROUTING_QR</span>
+                                <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">VERIFIED</span>
+                            </div>
+                            <div class="space-y-1.5 text-[10px] font-mono">
+                                <div class="px-2 py-1 rounded bg-slate-900 flex justify-between">
+                                    <span class="text-slate-200">MEMO-2026-089</span>
+                                    <span class="text-amber-300">For Signature</span>
+                                </div>
+                                <div class="px-2 py-1 rounded bg-slate-900 flex justify-between">
+                                    <span class="text-slate-200">PROC-2026-412</span>
+                                    <span class="text-emerald-400">Released</span>
+                                </div>
+                            </div>
+                            <div class="text-[10px] font-mono text-slate-400">QR Barcode Audit Trail • Instant Search</div>
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex items-center gap-2 text-xs font-mono text-amber-400 mb-1">
+                                <i class="ri-file-shield-2-fill"></i> Paperless Workflow
+                            </div>
+                            <h3 class="font-display font-bold text-xl text-white">Document Management System</h3>
+                            <p class="text-sm text-slate-400 mt-2 leading-relaxed">
+                                QR-coded incoming/outgoing document routing, real-time status tracking, role-based vault permissions, and instant full-text archive lookup.
+                            </p>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex flex-wrap gap-1.5 text-[11px] font-mono">
+                                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">PHP</span>
+                                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">JavaScript</span>
+                                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">MySQL</span>
+                            </div>
+                            <button type="button" onclick="openSystemDemo('dms')" class="w-full py-2.5 px-4 rounded-xl bg-amber-500/15 hover:bg-amber-400 text-amber-300 hover:text-slate-950 border border-amber-500/30 font-semibold text-xs font-mono flex items-center justify-center gap-2 transition-all">
+                                <i class="ri-play-circle-fill text-base"></i> Live Demo (Iframe)
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <article data-node-id="sys-emr" class="playground-node spotlight-card glass-panel rounded-3xl overflow-hidden flex flex-col cursor-grab relative group">
+                    <button type="button" data-port="sys-emr" class="node-port absolute top-3 right-3 w-3.5 h-3.5 rounded-full bg-rose-400 border-2 border-slate-950 cursor-crosshair z-20"></button>
+                    <div class="relative h-44 bg-gradient-to-br from-rose-950 via-slate-900 to-slate-950 p-4 border-b border-slate-800/80 overflow-hidden">
+                        <div class="w-full h-full rounded-xl bg-slate-950/90 border border-rose-500/30 p-3 flex flex-col justify-between group-hover:scale-[1.03] transition-transform">
+                            <div class="flex items-center justify-between text-[10px] font-mono text-rose-300">
+                                <span>CLINIC_EMR_VAULT</span>
+                                <span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300">ENCRYPTED</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-1.5 text-[10px] font-mono text-center">
+                                <div class="p-1.5 rounded bg-slate-900"><span class="text-slate-400 block">BP</span><span class="text-emerald-400 font-bold">118/78</span></div>
+                                <div class="p-1.5 rounded bg-slate-900"><span class="text-slate-400 block">HR</span><span class="text-sky-400 font-bold">72 bpm</span></div>
+                                <div class="p-1.5 rounded bg-slate-900"><span class="text-slate-400 block">TEMP</span><span class="text-amber-300 font-bold">36.6°C</span></div>
+                            </div>
+                            <div class="text-[10px] font-mono text-slate-400">SOAP Notes • E-Prescription • Lab History</div>
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex items-center gap-2 text-xs font-mono text-rose-400 mb-1">
+                                <i class="ri-heart-pulse-fill"></i> Healthcare &amp; Clinics
+                            </div>
+                            <h3 class="font-display font-bold text-xl text-white">Medical Records System (EMR)</h3>
+                            <p class="text-sm text-slate-400 mt-2 leading-relaxed">
+                                Patient consultation timelines, vital signs charting, digital Rx prescriptions, queue triage, and confidential clinical history storage.
+                            </p>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex flex-wrap gap-1.5 text-[11px] font-mono">
+                                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">Django</span>
+                                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">TypeScript</span>
+                                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">NoSQL</span>
+                            </div>
+                            <button type="button" onclick="openSystemDemo('emr')" class="w-full py-2.5 px-4 rounded-xl bg-rose-500/15 hover:bg-rose-500 text-rose-300 hover:text-slate-950 border border-rose-500/30 font-semibold text-xs font-mono flex items-center justify-center gap-2 transition-all">
+                                <i class="ri-play-circle-fill text-base"></i> Live Demo (Iframe)
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <article data-node-id="sys-iot" class="playground-node spotlight-card glass-panel rounded-3xl overflow-hidden flex flex-col cursor-grab relative group">
+                    <button type="button" data-port="sys-iot" class="node-port absolute top-3 right-3 w-3.5 h-3.5 rounded-full bg-cyan-400 border-2 border-slate-950 cursor-crosshair z-20"></button>
+                    <div class="relative h-44 bg-gradient-to-br from-cyan-950 via-slate-900 to-slate-950 p-4 border-b border-slate-800/80 overflow-hidden">
+                        <div class="w-full h-full rounded-xl bg-slate-950/90 border border-cyan-500/30 p-3 flex flex-col justify-between group-hover:scale-[1.03] transition-transform">
+                            <div class="flex items-center justify-between text-[10px] font-mono text-cyan-300">
+                                <span>OPENCV_RPI_NODE_01</span>
+                                <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">60 FPS</span>
+                            </div>
+                            <div class="relative h-16 rounded bg-slate-900 border border-dashed border-cyan-500/40 flex items-center justify-center">
+                                <div class="px-2.5 py-1 border border-emerald-400 text-[10px] font-mono text-emerald-300 bg-emerald-500/10">
+                                    OBJECT_DETECTED [98.4%]
+                                </div>
+                            </div>
+                            <div class="text-[10px] font-mono text-slate-400">Arduino GPIO • Socket.io • Computer Vision</div>
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex items-center gap-2 text-xs font-mono text-cyan-400 mb-1">
+                                <i class="ri-robot-2-fill"></i> Robotics, AI &amp; Thesis Prototypes
+                            </div>
+                            <h3 class="font-display font-bold text-xl text-white">Arduino, RPi &amp; OpenCV Systems</h3>
+                            <p class="text-sm text-slate-400 mt-2 leading-relaxed">
+                                Custom hardware-software automation, real-time OpenCV object/face recognition, sensor telemetry dashboards, and university thesis prototypes.
+                            </p>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex flex-wrap gap-1.5 text-[11px] font-mono">
+                                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">Python</span>
+                                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">OpenCV</span>
+                                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">Socket.io</span>
+                            </div>
+                            <button type="button" onclick="openSystemDemo('iot')" class="w-full py-2.5 px-4 rounded-xl bg-cyan-500/15 hover:bg-cyan-400 text-cyan-300 hover:text-slate-950 border border-cyan-500/30 font-semibold text-xs font-mono flex items-center justify-center gap-2 transition-all">
+                                <i class="ri-play-circle-fill text-base"></i> Live Demo (Iframe)
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="repos" class="scroll-section space-y-8">
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 text-xs font-mono text-emerald-400 uppercase tracking-widest mb-2">
+                        <i class="ri-github-fill"></i> Live GitHub Feed (@brylecordova)
+                    </div>
+                    <h2 class="font-display text-3xl sm:text-4xl font-bold text-white">Open-Source &amp; Public Repositories</h2>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="relative">
+                        <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input id="repoSearchInput" type="text" placeholder="Filter repositories..." class="pl-9 pr-4 py-2 rounded-xl glass-panel text-xs font-mono text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-400 w-56">
+                    </div>
+                    <a href="https://github.com/brylecordova" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl glass-panel hover:border-sky-400 text-xs font-mono text-sky-300 flex items-center gap-2 transition-all">
+                        <i class="ri-external-link-line"></i> GitHub Profile
+                    </a>
+                </div>
+            </div>
+
+            <div id="repoLangFilters" class="flex flex-wrap gap-2"></div>
+
+            <div id="reposGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div class="col-span-full glass-panel rounded-2xl p-8 text-center font-mono text-sm text-slate-400">
+                    <i class="ri-loader-4-line animate-spin text-2xl text-sky-400 block mb-2"></i>
+                    Fetching public repositories from github.com/brylecordova...
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="scroll-section space-y-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 text-xs font-mono text-violet-400 uppercase tracking-widest mb-2">
+                        <i class="ri-stack-fill"></i> Modular Capabilities
+                    </div>
+                    <h2 class="font-display text-3xl sm:text-4xl font-bold text-white">Interactive Tech Stack</h2>
+                </div>
+                <p class="text-sm text-slate-400 font-mono">Drag skill modules or wire their ports together.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div data-node-id="skill-frontend" class="playground-node spotlight-card glass-panel rounded-3xl p-6 cursor-grab relative space-y-4">
+                    <button type="button" data-port="skill-frontend" class="node-port absolute top-4 right-4 w-3.5 h-3.5 rounded-full bg-sky-400 border-2 border-slate-950 cursor-crosshair"></button>
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-2xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400 text-xl">
+                            <i class="ri-layout-masonry-fill"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-display font-bold text-lg text-white">Frontend Engineering</h3>
+                            <p class="text-xs font-mono text-slate-400">Reactive &amp; Typed UIs</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 rounded-xl bg-sky-500/15 border border-sky-500/30 text-sky-300 text-xs font-mono">Vue.js</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-sky-500/15 border border-sky-500/30 text-sky-300 text-xs font-mono">TypeScript</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-sky-500/15 border border-sky-500/30 text-sky-300 text-xs font-mono">React.js</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-800/90 text-slate-200 text-xs font-mono">HTML5</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-800/90 text-slate-200 text-xs font-mono">CSS3</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-800/90 text-slate-200 text-xs font-mono">JavaScript</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-800/90 text-slate-200 text-xs font-mono">jQuery</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-800/90 text-slate-200 text-xs font-mono">Ajax</span>
+                    </div>
+                </div>
+
+                <div data-node-id="skill-backend" class="playground-node spotlight-card glass-panel rounded-3xl p-6 cursor-grab relative space-y-4">
+                    <button type="button" data-port="skill-backend" class="node-port absolute top-4 right-4 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-slate-950 cursor-crosshair"></button>
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xl">
+                            <i class="ri-server-fill"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-display font-bold text-lg text-white">Backend &amp; APIs</h3>
+                            <p class="text-xs font-mono text-slate-400">Auth, Realtime &amp; Core Logic</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-mono">Laravel Sanctum</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-mono">Django</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-mono">Node.js</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-800/90 text-slate-200 text-xs font-mono">PHP</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-800/90 text-slate-200 text-xs font-mono">Python</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-800/90 text-slate-200 text-xs font-mono">Java</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-800/90 text-slate-200 text-xs font-mono">C#</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-800/90 text-slate-200 text-xs font-mono">Socket.io</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-800/90 text-slate-200 text-xs font-mono">OOP</span>
+                    </div>
+                </div>
+
+                <div data-node-id="skill-gamedev" class="playground-node spotlight-card glass-panel rounded-3xl p-6 cursor-grab relative space-y-4">
+                    <button type="button" data-port="skill-gamedev" class="node-port absolute top-4 right-4 w-3.5 h-3.5 rounded-full bg-violet-400 border-2 border-slate-950 cursor-crosshair"></button>
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-2xl bg-violet-500/15 border border-violet-500/30 flex items-center justify-center text-violet-400 text-xl">
+                            <i class="ri-gamepad-fill"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-display font-bold text-lg text-white">Game Dev.</h3>
+                            <p class="text-xs font-mono text-slate-400">2D/3D Engines &amp; Simulations</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 rounded-xl bg-violet-500/15 border border-violet-500/30 text-violet-300 text-xs font-mono">Godot</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-violet-500/15 border border-violet-500/30 text-violet-300 text-xs font-mono">Unity</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-violet-500/15 border border-violet-500/30 text-violet-300 text-xs font-mono">Unreal Engine</span>
+                    </div>
+                </div>
+
+                <div data-node-id="skill-hardware" class="playground-node spotlight-card glass-panel rounded-3xl p-6 cursor-grab relative space-y-4">
+                    <button type="button" data-port="skill-hardware" class="node-port absolute top-4 right-4 w-3.5 h-3.5 rounded-full bg-cyan-400 border-2 border-slate-950 cursor-crosshair"></button>
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-xl">
+                            <i class="ri-cpu-fill"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-display font-bold text-lg text-white">Hardware &amp; Vision</h3>
+                            <p class="text-xs font-mono text-slate-400">Embedded Robotics &amp; ML</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-mono">Arduino</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-mono">Raspberry Pi</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-mono">OpenCV</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-800/90 text-slate-200 text-xs font-mono">Computer Repair</span>
+                    </div>
+                </div>
+
+                <div data-node-id="skill-data" class="playground-node spotlight-card glass-panel rounded-3xl p-6 cursor-grab relative space-y-4 md:col-span-2">
+                    <button type="button" data-port="skill-data" class="node-port absolute top-4 right-4 w-3.5 h-3.5 rounded-full bg-amber-400 border-2 border-slate-950 cursor-crosshair"></button>
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xl">
+                            <i class="ri-database-2-fill"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-display font-bold text-lg text-white">Databases, Certs &amp; Languages</h3>
+                            <p class="text-xs font-mono text-slate-400">Data Architecture &amp; Academic Credentials</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-mono">MySQL</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-mono">NoSQL</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-800/90 text-slate-200 text-xs font-mono">Expert Systems &amp; Computer Vision</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-800/90 text-slate-200 text-xs font-mono">Naive Bayes ML</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-800/90 text-slate-200 text-xs font-mono">Algorithm Implementation</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-slate-800/90 text-slate-200 text-xs font-mono">English • Tagalog • Bisaya</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="experience" class="scroll-section space-y-8">
+            <div>
+                <div class="inline-flex items-center gap-2 text-xs font-mono text-amber-400 uppercase tracking-widest mb-2">
+                    <i class="ri-briefcase-4-fill"></i> Service &amp; Background
+                </div>
+                <h2 class="font-display text-3xl sm:text-4xl font-bold text-white">Freelance Practice &amp; Government Experience</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <div data-node-id="exp-freelance" class="playground-node spotlight-card glass-panel rounded-3xl p-7 lg:col-span-6 cursor-grab relative border-emerald-500/30">
+                    <button type="button" data-port="exp-freelance" class="node-port absolute top-4 right-4 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-slate-950 cursor-crosshair"></button>
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <span class="px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-mono text-xs font-semibold">
+                            PRIMARY SERVICE • OPEN FOR CLIENTS
+                        </span>
+                        <span class="font-mono text-xs text-slate-400">Self-Employed</span>
+                    </div>
+                    <h3 class="font-display text-2xl font-bold text-white">Freelance Web &amp; Systems Developer</h3>
+                    <p class="text-sm text-slate-300 mt-3 leading-relaxed">
+                        Partnering with local enterprises, clinics, retail stores, and university researchers to architect, deploy, and maintain end-to-end digital platforms and embedded hardware prototypes.
+                    </p>
+                    <ul class="mt-5 space-y-2.5 text-sm text-slate-300">
+                        <li class="flex items-start gap-2.5">
+                            <i class="ri-checkbox-circle-fill text-emerald-400 mt-0.5"></i>
+                            <span>Custom business systems: Point of Sale (POS), Inventory Management, HRIS, Document Management, and Medical Records Systems.</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="ri-checkbox-circle-fill text-emerald-400 mt-0.5"></i>
+                            <span>University engineering &amp; IT thesis builds integrating Arduino microcontrollers, Raspberry Pi nodes, and OpenCV computer vision.</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="ri-checkbox-circle-fill text-emerald-400 mt-0.5"></i>
+                            <span>Full lifecycle delivery from database schema design and API security (Laravel Sanctum / Django / Node.js) to on-site deployment.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div data-node-id="exp-gov" class="playground-node spotlight-card glass-panel rounded-3xl p-7 lg:col-span-6 cursor-grab relative">
+                    <button type="button" data-port="exp-gov" class="node-port absolute top-4 right-4 w-3.5 h-3.5 rounded-full bg-sky-400 border-2 border-slate-950 cursor-crosshair"></button>
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <span class="px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300 font-mono text-xs">
+                            GOVERNMENT WORK EXPERIENCE
+                        </span>
+                        <span class="font-mono text-xs text-sky-400">Public Sector IT</span>
+                    </div>
+                    <h3 class="font-display text-xl font-bold text-white mb-5">Institutional Roles &amp; Track Record</h3>
+
+                    <div class="space-y-4 border-l-2 border-slate-800 pl-5 ml-1.5">
+                        <div class="relative">
+                            <span class="absolute -left-[27px] top-1.5 w-3 h-3 rounded-full bg-sky-400 ring-4 ring-slate-950"></span>
+                            <div class="flex flex-wrap items-center justify-between gap-1">
+                                <h4 class="font-bold text-white text-sm">Computer Programmer II</h4>
+                                <span class="text-xs font-mono text-sky-400">2024 – Present</span>
+                            </div>
+                            <p class="text-xs text-slate-400">Department of Education</p>
+                        </div>
+
+                        <div class="relative">
+                            <span class="absolute -left-[27px] top-1.5 w-3 h-3 rounded-full bg-slate-600 ring-4 ring-slate-950"></span>
+                            <div class="flex flex-wrap items-center justify-between gap-1">
+                                <h4 class="font-bold text-slate-200 text-sm">Administrative Officer II</h4>
+                                <span class="text-xs font-mono text-slate-400">2023 – 2024</span>
+                            </div>
+                            <p class="text-xs text-slate-400">Civil Service Commission</p>
+                        </div>
+
+                        <div class="relative">
+                            <span class="absolute -left-[27px] top-1.5 w-3 h-3 rounded-full bg-slate-600 ring-4 ring-slate-950"></span>
+                            <div class="flex flex-wrap items-center justify-between gap-1">
+                                <h4 class="font-bold text-slate-200 text-sm">Administrative Assistant (IT Support Staff)</h4>
+                                <span class="text-xs font-mono text-slate-400">2022 – 2023</span>
+                            </div>
+                            <p class="text-xs text-slate-400">Civil Service Commission</p>
+                        </div>
+
+                        <div class="relative">
+                            <span class="absolute -left-[27px] top-1.5 w-3 h-3 rounded-full bg-slate-600 ring-4 ring-slate-950"></span>
+                            <div class="flex flex-wrap items-center justify-between gap-1">
+                                <h4 class="font-bold text-slate-200 text-sm">Technical Support Staff</h4>
+                                <span class="text-xs font-mono text-slate-400">2021 – 2022</span>
+                            </div>
+                            <p class="text-xs text-slate-400">Civil Service Commission</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono text-slate-400">
+                        <span>BS Information Technology (2016–2020)</span>
+                        <span class="text-slate-300">ACLC College - Butuan</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="scroll-section space-y-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <div class="lg:col-span-5 space-y-4">
+                    <div class="inline-flex items-center gap-2 text-xs font-mono text-sky-400 uppercase tracking-widest">
+                        <i class="ri-send-plane-fill"></i> Direct Channels
+                    </div>
+                    <h2 class="font-display text-3xl sm:text-4xl font-bold text-white">Start a Project</h2>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        Need a custom POS, Inventory, HRIS, Document Tracking, Medical Records platform, or an Arduino/Raspberry Pi system? Message me directly on WhatsApp, Telegram, or send an email below without leaving the page.
+                    </p>
+
+                    <div class="space-y-3 pt-2">
+                        <a href="https://wa.me/639274988152" target="_blank" rel="noopener noreferrer" class="glass-panel hover:border-emerald-400/60 p-4 rounded-2xl flex items-center justify-between transition-all group">
+                            <div class="flex items-center gap-3.5">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-xl">
+                                    <i class="ri-whatsapp-fill"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-white">WhatsApp Direct</div>
+                                    <div class="text-xs font-mono text-slate-400">+63 927 498 8152</div>
+                                </div>
+                            </div>
+                            <i class="ri-arrow-right-up-line text-slate-400 group-hover:text-emerald-400 text-lg"></i>
+                        </a>
+
+                        <a href="https://t.me/+639274988152" target="_blank" rel="noopener noreferrer" class="glass-panel hover:border-sky-400/60 p-4 rounded-2xl flex items-center justify-between transition-all group">
+                            <div class="flex items-center gap-3.5">
+                                <div class="w-10 h-10 rounded-xl bg-sky-500/15 text-sky-400 flex items-center justify-center text-xl">
+                                    <i class="ri-telegram-fill"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-white">Telegram Chat</div>
+                                    <div class="text-xs font-mono text-slate-400">+63 927 498 8152</div>
+                                </div>
+                            </div>
+                            <i class="ri-arrow-right-up-line text-slate-400 group-hover:text-sky-400 text-lg"></i>
+                        </a>
+
+                        <button type="button" onclick="copyEmailAddress()" class="w-full glass-panel hover:border-violet-400/60 p-4 rounded-2xl flex items-center justify-between transition-all group text-left">
+                            <div class="flex items-center gap-3.5">
+                                <div class="w-10 h-10 rounded-xl bg-violet-500/15 text-violet-400 flex items-center justify-center text-xl">
+                                    <i class="ri-mail-send-fill"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-white">cordovabryle@gmail.com</div>
+                                    <div class="text-xs font-mono text-slate-400">Click to copy email address</div>
+                                </div>
+                            </div>
+                            <i class="ri-file-copy-line text-slate-400 group-hover:text-violet-400 text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 glass-panel rounded-3xl p-6 sm:p-8">
+                    <form id="contactForm" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-mono text-slate-400 mb-1.5">Your Name</label>
+                                <input type="text" name="name" required placeholder="Juan Dela Cruz" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-800 text-sm text-white focus:outline-none focus:border-sky-400">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-mono text-slate-400 mb-1.5">Your Email</label>
+                                <input type="email" name="email" required placeholder="client@company.com" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-800 text-sm text-white focus:outline-none focus:border-sky-400">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400 mb-1.5">System / Project Type</label>
+                            <select name="subject" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-800 text-sm text-white focus:outline-none focus:border-sky-400">
+                                <option value="Point of Sale (POS) / Inventory System">Point of Sale (POS) / Inventory System</option>
+                                <option value="HRIS / Payroll / Document Management">HRIS / Payroll / Document Management</option>
+                                <option value="Medical Records System (EMR)">Medical Records System (EMR)</option>
+                                <option value="Custom Web Application (Laravel / Vue / React / Django)">Custom Web Application (Laravel / Vue / React / Django)</option>
+                                <option value="Arduino / Raspberry Pi / OpenCV Thesis Project">Arduino / Raspberry Pi / OpenCV Thesis Project</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400 mb-1.5">Project Details</label>
+                            <textarea name="message" rows="4" required placeholder="Tell me about your target features, timeline, or hardware setup..." class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-800 text-sm text-white focus:outline-none focus:border-sky-400"></textarea>
+                        </div>
+                        <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                            <span id="formFeedback" class="text-xs font-mono text-slate-400">Serverless email delivery via FormSubmit</span>
+                            <button type="submit" id="sendEmailBtn" class="px-6 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-400 text-slate-950 font-bold text-sm flex items-center gap-2 hover:brightness-110 transition-all">
+                                <i class="ri-send-plane-2-fill"></i> Send Message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <nav id="osDock" aria-label="Interactive Dock" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 px-3 py-2 rounded-2xl glass-panel border-slate-700/80 flex items-end gap-1.5 sm:gap-2 shadow-2xl">
+        <a href="#hero" data-dock="hero" class="dock-item group relative w-11 h-11 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-sky-400 flex items-center justify-center text-slate-300 hover:text-sky-400">
+            <span class="opacity-0 group-hover:opacity-100 -top-9 pointer-events-none absolute px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-[11px] font-mono text-white whitespace-nowrap transition-opacity">Identity</span>
+            <i class="ri-user-smile-fill text-lg"></i>
+        </a>
+        <a href="#systems" data-dock="systems" class="dock-item group relative w-11 h-11 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-sky-400 flex items-center justify-center text-slate-300 hover:text-sky-400">
+            <span class="opacity-0 group-hover:opacity-100 -top-9 pointer-events-none absolute px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-[11px] font-mono text-white whitespace-nowrap transition-opacity">Systems</span>
+            <i class="ri-window-fill text-lg"></i>
+        </a>
+        <a href="#repos" data-dock="repos" class="dock-item group relative w-11 h-11 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-emerald-400 flex items-center justify-center text-slate-300 hover:text-emerald-400">
+            <span class="opacity-0 group-hover:opacity-100 -top-9 pointer-events-none absolute px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-[11px] font-mono text-white whitespace-nowrap transition-opacity">GitHub</span>
+            <i class="ri-github-fill text-lg"></i>
+        </a>
+        <a href="#skills" data-dock="skills" class="dock-item group relative w-11 h-11 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-violet-400 flex items-center justify-center text-slate-300 hover:text-violet-400">
+            <span class="opacity-0 group-hover:opacity-100 -top-9 pointer-events-none absolute px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-[11px] font-mono text-white whitespace-nowrap transition-opacity">Tech Stack</span>
+            <i class="ri-stack-fill text-lg"></i>
+        </a>
+        <a href="#experience" data-dock="experience" class="dock-item group relative w-11 h-11 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-amber-400 flex items-center justify-center text-slate-300 hover:text-amber-400">
+            <span class="opacity-0 group-hover:opacity-100 -top-9 pointer-events-none absolute px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-[11px] font-mono text-white whitespace-nowrap transition-opacity">Experience</span>
+            <i class="ri-briefcase-4-fill text-lg"></i>
+        </a>
+        <a href="#contact" data-dock="contact" class="dock-item group relative w-11 h-11 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-rose-400 flex items-center justify-center text-slate-300 hover:text-rose-400">
+            <span class="opacity-0 group-hover:opacity-100 -top-9 pointer-events-none absolute px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-[11px] font-mono text-white whitespace-nowrap transition-opacity">Hire / Contact</span>
+            <i class="ri-send-plane-fill text-lg"></i>
+        </a>
+        <div class="w-px h-7 bg-slate-800 mx-0.5 self-center"></div>
+        <button type="button" onclick="openCommandPalette()" class="dock-item group relative w-11 h-11 rounded-xl bg-sky-500/15 border border-sky-500/40 hover:bg-sky-500 text-sky-300 hover:text-slate-950 flex items-center justify-center">
+            <span class="opacity-0 group-hover:opacity-100 -top-9 pointer-events-none absolute px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-[11px] font-mono text-white whitespace-nowrap transition-opacity">Palette (Ctrl+K)</span>
+            <i class="ri-command-fill text-lg"></i>
+        </button>
+    </nav>
+
+    <div id="radialOrb" class="fixed bottom-20 right-4 z-40">
+        <div id="radialItems" class="hidden flex-col items-end gap-2 mb-2.5">
+            <a href="https://wa.me/639274988152" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-full glass-panel border-emerald-500/40 text-emerald-300 text-xs font-mono flex items-center gap-2 hover:scale-105 transition-transform">
+                <span>WhatsApp</span> <i class="ri-whatsapp-fill text-base"></i>
+            </a>
+            <a href="https://t.me/+639274988152" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-full glass-panel border-sky-500/40 text-sky-300 text-xs font-mono flex items-center gap-2 hover:scale-105 transition-transform">
+                <span>Telegram</span> <i class="ri-telegram-fill text-base"></i>
+            </a>
+            <button type="button" onclick="triggerHeavyDrop()" class="px-3 py-2 rounded-full glass-panel border-amber-500/40 text-amber-300 text-xs font-mono flex items-center gap-2 hover:scale-105 transition-transform">
+                <span>Heavy Drop</span> <i class="ri-meteor-fill text-base"></i>
+            </button>
+            <button type="button" onclick="triggerShockwave()" class="px-3 py-2 rounded-full glass-panel border-violet-500/40 text-violet-300 text-xs font-mono flex items-center gap-2 hover:scale-105 transition-transform">
+                <span>Shockwave</span> <i class="ri-radar-fill text-base"></i>
+            </button>
+        </div>
+        <button id="radialToggleBtn" type="button" aria-label="Quick Actions Orb" class="w-12 h-12 rounded-full bg-gradient-to-tr from-sky-500 to-violet-500 text-slate-950 shadow-lg shadow-sky-500/30 flex items-center justify-center text-xl font-bold hover:scale-110 active:scale-95 transition-transform ml-auto">
+            <i id="radialIcon" class="ri-flashlight-fill"></i>
+        </button>
+    </div>
+
+    <div id="iframeModal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-6 modal-backdrop">
+        <div id="iframeWindow" class="w-full max-w-5xl h-[86vh] rounded-3xl bg-slate-950 border border-slate-700/90 shadow-2xl flex flex-col overflow-hidden transition-all duration-300">
+            <div class="px-4 py-3 bg-slate-900 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="closeIframeModal()" class="w-3.5 h-3.5 rounded-full bg-rose-500 hover:brightness-125" title="Close"></button>
+                    <button type="button" onclick="toggleIframeExpand()" class="w-3.5 h-3.5 rounded-full bg-amber-500 hover:brightness-125" title="Expand"></button>
+                    <button type="button" onclick="reloadIframeDemo()" class="w-3.5 h-3.5 rounded-full bg-emerald-500 hover:brightness-125" title="Reload"></button>
+                    <span id="iframeTitleBadge" class="ml-2 text-xs font-mono font-bold text-white">System Sandbox</span>
+                </div>
+
+                <div class="flex-1 max-w-md hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-400 truncate">
+                    <i class="ri-lock-2-fill text-emerald-400"></i>
+                    <span id="iframeUrlBar" class="truncate">https://brylecordova.github.io/sandbox/pos</span>
+                </div>
+
+                <div class="flex items-center gap-1.5">
+                    <button type="button" onclick="setIframeViewport('100%')" class="p-1.5 rounded-lg bg-slate-800 hover:text-sky-400 text-slate-300 text-xs" title="Desktop View">
+                        <i class="ri-computer-line"></i>
+                    </button>
+                    <button type="button" onclick="setIframeViewport('768px')" class="p-1.5 rounded-lg bg-slate-800 hover:text-sky-400 text-slate-300 text-xs" title="Tablet View">
+                        <i class="ri-tablet-line"></i>
+                    </button>
+                    <button type="button" onclick="setIframeViewport('390px')" class="p-1.5 rounded-lg bg-slate-800 hover:text-sky-400 text-slate-300 text-xs" title="Mobile View">
+                        <i class="ri-smartphone-line"></i>
+                    </button>
+                    <button type="button" onclick="reloadIframeDemo()" class="p-1.5 rounded-lg bg-slate-800 hover:text-emerald-400 text-slate-300 text-xs" title="Reload Iframe">
+                        <i class="ri-refresh-line"></i>
+                    </button>
+                    <button type="button" onclick="closeIframeModal()" class="px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white text-xs font-mono ml-1 transition-colors">
+                        ESC
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex-1 bg-slate-950 flex justify-center overflow-hidden p-0 sm:p-2">
+                <iframe id="demoIframe" title="Live Interactive System Preview" class="w-full h-full bg-slate-950 rounded-xl border border-slate-800/80 transition-all duration-300"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="cmdModal" class="fixed inset-0 z-50 hidden items-start justify-center pt-20 px-4 modal-backdrop">
+        <div class="w-full max-w-xl rounded-3xl glass-panel border-slate-700 overflow-hidden shadow-2xl">
+            <div class="px-4 py-3.5 border-b border-slate-800 flex items-center gap-3">
+                <i class="ri-search-2-line text-sky-400 text-lg"></i>
+                <input id="cmdSearchInput" type="text" placeholder="Search demos, physics actions, sections, or socials..." class="w-full bg-transparent text-sm text-white focus:outline-none placeholder:text-slate-500 font-mono">
+                <button type="button" onclick="closeCommandPalette()" class="text-xs font-mono text-slate-400 hover:text-white">ESC</button>
+            </div>
+            <div id="cmdList" class="max-h-80 overflow-y-auto p-2 space-y-1"></div>
+        </div>
+    </div>
+
+    <div id="toastBanner" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 hidden px-4 py-2.5 rounded-full glass-panel border-sky-400/50 text-xs font-mono text-sky-200 shadow-xl items-center gap-2">
+        <i class="ri-sparkling-2-fill text-sky-400"></i>
+        <span id="toastMessage">Action triggered</span>
+    </div>
+
+    <script>
+        const stage = document.getElementById('playgroundStage');
+        const cableSvg = document.getElementById('cableSvg');
+        const bgCanvas = document.getElementById('bgCanvas');
+        const ctx = bgCanvas.getContext('2d');
+        const cursorAura = document.getElementById('cursorAura');
+        const nodes = Array.from(document.querySelectorAll('.playground-node'));
+
+        const nodeStates = new Map();
+        const connections = [];
+        const shockwaves = [];
+        const impactSparks = [];
+        let linkMode = false;
+        let pendingSourcePort = null;
+        let pointerPos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+        let heavyDropActive = false;
+
+        nodes.forEach((el, index) => {
+            const id = el.dataset.nodeId || `node-${index}`;
+            el.dataset.nodeId = id;
+            nodeStates.set(id, {
+                el,
+                x: 0,
+                y: 0,
+                vx: 0,
+                vy: 0,
+                angle: 0,
+                vAngle: 0,
+                dragging: false,
+                physicsActive: false
+            });
+        });
+
+        function showToast(msg) {
+            const banner = document.getElementById('toastBanner');
+            document.getElementById('toastMessage').textContent = msg;
+            banner.classList.remove('hidden');
+            banner.classList.add('flex');
+            clearTimeout(window.__toastTimer);
+            window.__toastTimer = setTimeout(() => {
+                banner.classList.add('hidden');
+                banner.classList.remove('flex');
+            }, 2600);
+        }
+
+        function triggerScreenShake() {
+            document.body.classList.remove('shake-impact');
+            void document.body.offsetWidth;
+            document.body.classList.add('shake-impact');
+        }
+
+        function spawnImpactSparks(x, y, color = '#38bdf8', count = 16) {
+            for (let i = 0; i < count; i++) {
+                const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.4;
+                const speed = 2 + Math.random() * 5.5;
+                impactSparks.push({
+                    x,
+                    y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed - 1.5,
+                    life: 1,
+                    color
+                });
+            }
+        }
+
+        function applyNodeTransform(state) {
+            state.el.style.transform = `translate3d(${state.x.toFixed(1)}px, ${state.y.toFixed(1)}px, 0) rotate(${state.angle.toFixed(2)}deg)`;
+        }
+
+        function updateCableCount() {
+            document.getElementById('cableCountBadge').textContent = connections.length;
+        }
+
+        function addConnection(fromId, toId) {
+            if (!fromId || !toId || fromId === toId) return;
+            const exists = connections.some(c =>
+                (c.from === fromId && c.to === toId) || (c.from === toId && c.to === fromId)
+            );
+            if (exists) {
+                showToast('Nodes already linked');
+                return;
+            }
+            const colors = ['#38bdf8', '#34d399', '#a78bfa', '#fbbf24', '#fb7185'];
+            const color = colors[connections.length % colors.length];
+            connections.push({ from: fromId, to: toId, color });
+            updateCableCount();
+            renderCables();
+            const targetEl = nodeStates.get(toId)?.el;
+            if (targetEl) {
+                const r = targetEl.getBoundingClientRect();
+                spawnImpactSparks(r.left + r.width / 2, r.top + r.height / 2, color, 14);
+            }
+            showToast(`Linked ${fromId} ↔ ${toId}`);
+        }
+
+        function renderCables() {
+            cableSvg.innerHTML = '';
+            connections.forEach((conn, idx) => {
+                const fromPort = document.querySelector(`[data-port="${conn.from}"]`);
+                const toPort = document.querySelector(`[data-port="${conn.to}"]`);
+                if (!fromPort || !toPort) return;
+
+                const r1 = fromPort.getBoundingClientRect();
+                const r2 = toPort.getBoundingClientRect();
+                const x1 = r1.left + r1.width / 2;
+                const y1 = r1.top + r1.height / 2;
+                const x2 = r2.left + r2.width / 2;
+                const y2 = r2.top + r2.height / 2;
+
+                const sag = Math.min(110, Math.hypot(x2 - x1, y2 - y1) * 0.28 + 30);
+                const cx1 = x1;
+                const cy1 = y1 + sag;
+                const cx2 = x2;
+                const cy2 = y2 + sag;
+
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`);
+                path.setAttribute('fill', 'none');
+                path.setAttribute('stroke', conn.color);
+                path.setAttribute('stroke-width', '2.5');
+                path.setAttribute('class', 'cable-path');
+                path.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    connections.splice(idx, 1);
+                    updateCableCount();
+                    renderCables();
+                    spawnImpactSparks(e.clientX, e.clientY, conn.color, 10);
+                    showToast('Cable disconnected');
+                });
+                cableSvg.appendChild(path);
+            });
+
+            if (linkMode && pendingSourcePort) {
+                const srcPort = document.querySelector(`[data-port="${pendingSourcePort}"]`);
+                if (srcPort) {
+                    const r1 = srcPort.getBoundingClientRect();
+                    const x1 = r1.left + r1.width / 2;
+                    const y1 = r1.top + r1.height / 2;
+                    const draft = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    draft.setAttribute('d', `M ${x1} ${y1} Q ${(x1 + pointerPos.x) / 2} ${Math.max(y1, pointerPos.y) + 45}, ${pointerPos.x} ${pointerPos.y}`);
+                    draft.setAttribute('fill', 'none');
+                    draft.setAttribute('stroke', '#38bdf8');
+                    draft.setAttribute('stroke-width', '2');
+                    draft.setAttribute('stroke-dasharray', '6 6');
+                    cableSvg.appendChild(draft);
+                }
+            }
+        }
+
+        function toggleLinkMode(forceState) {
+            linkMode = typeof forceState === 'boolean' ? forceState : !linkMode;
+            document.body.classList.toggle('link-mode-active', linkMode);
+            const btn = document.getElementById('linkModeBtn');
+            btn.classList.toggle('border-sky-400', linkMode);
+            btn.classList.toggle('bg-sky-500/20', linkMode);
+            document.getElementById('playgroundStatus').textContent = linkMode ? 'CLICK TWO PORTS TO WIRE' : 'FREE DRAG & LINK';
+            if (!linkMode && pendingSourcePort) {
+                document.querySelector(`[data-node-id="${pendingSourcePort}"]`)?.classList.remove('node-selected-source');
+                pendingSourcePort = null;
+                renderCables();
+            }
+            if (linkMode) showToast('Link Mode ON: Click any glowing node port to connect');
+        }
+
+        document.querySelectorAll('[data-port]').forEach(port => {
+            port.addEventListener('pointerdown', (e) => {
+                e.stopPropagation();
+                const nodeId = port.dataset.port;
+                if (!pendingSourcePort) {
+                    if (!linkMode) toggleLinkMode(true);
+                    pendingSourcePort = nodeId;
+                    document.querySelector(`[data-node-id="${nodeId}"]`)?.classList.add('node-selected-source');
+                    showToast(`Source selected: ${nodeId}. Now click target port.`);
+                } else if (pendingSourcePort === nodeId) {
+                    document.querySelector(`[data-node-id="${nodeId}"]`)?.classList.remove('node-selected-source');
+                    pendingSourcePort = null;
+                    renderCables();
+                } else {
+                    document.querySelector(`[data-node-id="${pendingSourcePort}"]`)?.classList.remove('node-selected-source');
+                    addConnection(pendingSourcePort, nodeId);
+                    pendingSourcePort = null;
+                }
+            });
+        });
+
+        nodeStates.forEach((state, id) => {
+            const el = state.el;
+            let startX = 0;
+            let startY = 0;
+            let origX = 0;
+            let origY = 0;
+            let lastMoveX = 0;
+            let lastMoveY = 0;
+
+            el.addEventListener('pointerdown', (e) => {
+                if (e.target.closest('button, a, input, textarea, select, [data-port]')) return;
+                state.dragging = true;
+                state.physicsActive = false;
+                state.vx = 0;
+                state.vy = 0;
+                el.classList.add('is-dragging');
+                el.setPointerCapture(e.pointerId);
+                startX = e.clientX;
+                startY = e.clientY;
+                origX = state.x;
+                origY = state.y;
+                lastMoveX = e.clientX;
+                lastMoveY = e.clientY;
+            });
+
+            el.addEventListener('pointermove', (e) => {
+                const rect = el.getBoundingClientRect();
+                el.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+                el.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+
+                if (!state.dragging) return;
+                state.vx = (e.clientX - lastMoveX) * 0.45;
+                state.vy = (e.clientY - lastMoveY) * 0.45;
+                lastMoveX = e.clientX;
+                lastMoveY = e.clientY;
+                state.x = origX + (e.clientX - startX);
+                state.y = origY + (e.clientY - startY);
+                state.angle = Math.max(-10, Math.min(10, state.vx * 0.45));
+                applyNodeTransform(state);
+                renderCables();
+            });
+
+            const endDrag = () => {
+                if (!state.dragging) return;
+                state.dragging = false;
+                el.classList.remove('is-dragging');
+                if (heavyDropActive || Math.hypot(state.vx, state.vy) > 3.5) {
+                    state.physicsActive = true;
+                } else {
+                    state.angle = 0;
+                    applyNodeTransform(state);
+                }
+            };
+
+            el.addEventListener('pointerup', endDrag);
+            el.addEventListener('pointercancel', endDrag);
+        });
+
+        function triggerHeavyDrop() {
+            heavyDropActive = true;
+            document.getElementById('playgroundStatus').textContent = 'HEAVY GRAVITY ACTIVE';
+            triggerScreenShake();
+            nodeStates.forEach((state) => {
+                const rect = state.el.getBoundingClientRect();
+                if (rect.top < window.innerHeight + 120 && rect.bottom > -120) {
+                    state.physicsActive = true;
+                    state.vy = 4 + Math.random() * 8;
+                    state.vx = (Math.random() - 0.5) * 9;
+                    state.vAngle = (Math.random() - 0.5) * 2.4;
+                }
+            });
+            showToast('Heavy Drop activated! Cards are dropping with rigid-body bounce.');
+        }
+
+        function triggerShockwave(cx = window.innerWidth / 2, cy = window.innerHeight / 2) {
+            shockwaves.push({ x: cx, y: cy, radius: 10, alpha: 0.9 });
+            spawnImpactSparks(cx, cy, '#a78bfa', 22);
+            nodeStates.forEach((state) => {
+                const rect = state.el.getBoundingClientRect();
+                const nx = rect.left + rect.width / 2;
+                const ny = rect.top + rect.height / 2;
+                const dx = nx - cx;
+                const dy = ny - cy;
+                const dist = Math.max(60, Math.hypot(dx, dy));
+                if (dist < 650) {
+                    const force = (1 - dist / 650) * 18;
+                    state.physicsActive = true;
+                    state.vx += (dx / dist) * force;
+                    state.vy += (dy / dist) * force - 5;
+                    state.vAngle += (Math.random() - 0.5) * 3;
+                }
+            });
+            showToast('Radial shockwave impulse triggered!');
+        }
+
+        function resetPlayground() {
+            heavyDropActive = false;
+            toggleLinkMode(false);
+            connections.length = 0;
+            updateCableCount();
+            renderCables();
+            nodeStates.forEach((state) => {
+                state.x = 0;
+                state.y = 0;
+                state.vx = 0;
+                state.vy = 0;
+                state.angle = 0;
+                state.vAngle = 0;
+                state.physicsActive = false;
+                state.el.style.transition = 'transform 0.55s cubic-bezier(0.22, 1, 0.36, 1)';
+                applyNodeTransform(state);
+                setTimeout(() => {
+                    state.el.style.transition = '';
+                }, 580);
+            });
+            document.getElementById('playgroundStatus').textContent = 'FREE DRAG & LINK';
+            showToast('Playground reset to clean grid');
+        }
+
+        document.getElementById('linkModeBtn').addEventListener('click', () => toggleLinkMode());
+        document.getElementById('heavyDropBtn').addEventListener('click', triggerHeavyDrop);
+        document.getElementById('shockwaveBtn').addEventListener('click', () => triggerShockwave());
+        document.getElementById('resetPlaygroundBtn').addEventListener('click', resetPlayground);
+
+        const particles = [];
+        function resizeCanvas() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            renderCables();
+        });
+        window.addEventListener('scroll', renderCables, { passive: true });
+
+        for (let i = 0; i < 55; i++) {
+            particles.push({
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                vx: (Math.random() - 0.5) * 0.45,
+                vy: (Math.random() - 0.5) * 0.45,
+                r: 1.2 + Math.random() * 1.8
+            });
+        }
+
+        window.addEventListener('pointermove', (e) => {
+            pointerPos.x = e.clientX;
+            pointerPos.y = e.clientY;
+            cursorAura.style.left = `${e.clientX}px`;
+            cursorAura.style.top = `${e.clientY}px`;
+            if (linkMode && pendingSourcePort) {
+                renderCables();
+            }
+        });
+
+        window.addEventListener('click', (e) => {
+            if (!e.target.closest('button, a, input, textarea, select, .playground-node, #osDock, #radialOrb, #iframeModal, #cmdModal')) {
+                shockwaves.push({ x: e.clientX, y: e.clientY, radius: 6, alpha: 0.55 });
+                spawnImpactSparks(e.clientX, e.clientY, '#38bdf8', 8);
+            }
+        });
+
+        function animationLoop() {
+            ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+            for (let i = 0; i < particles.length; i++) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                if (p.x < 0 || p.x > bgCanvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > bgCanvas.height) p.vy *= -1;
+
+                const dx = pointerPos.x - p.x;
+                const dy = pointerPos.y - p.y;
+                const dist = Math.hypot(dx, dy);
+                if (dist < 150) {
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(pointerPos.x, pointerPos.y);
+                    ctx.strokeStyle = `rgba(56, 189, 248, ${(1 - dist / 150) * 0.28})`;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+
+                for (let j = i + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const d2 = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if (d2 < 115) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.strokeStyle = `rgba(148, 163, 184, ${(1 - d2 / 115) * 0.12})`;
+                        ctx.lineWidth = 0.8;
+                        ctx.stroke();
+                    }
+                }
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(56, 189, 248, 0.55)';
+                ctx.fill();
+            }
+
+            for (let i = shockwaves.length - 1; i >= 0; i--) {
+                const s = shockwaves[i];
+                s.radius += 11;
+                s.alpha -= 0.022;
+                if (s.alpha <= 0) {
+                    shockwaves.splice(i, 1);
+                    continue;
+                }
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(56, 189, 248, ${s.alpha})`;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            for (let i = impactSparks.length - 1; i >= 0; i--) {
+                const sp = impactSparks[i];
+                sp.x += sp.vx;
+                sp.y += sp.vy;
+                sp.vy += 0.18;
+                sp.life -= 0.03;
+                if (sp.life <= 0) {
+                    impactSparks.splice(i, 1);
+                    continue;
+                }
+                ctx.globalAlpha = sp.life;
+                ctx.fillStyle = sp.color;
+                ctx.fillRect(sp.x, sp.y, 3, 3);
+                ctx.globalAlpha = 1;
+            }
+
+            let anyMoved = false;
+            const floorLimit = window.innerHeight - 86;
+
+            nodeStates.forEach((state) => {
+                if (!state.physicsActive || state.dragging) return;
+                anyMoved = true;
+
+                if (heavyDropActive) {
+                    state.vy += 0.92;
+                } else {
+                    state.vx *= 0.94;
+                    state.vy *= 0.94;
+                    state.vAngle *= 0.9;
+                }
+
+                state.x += state.vx;
+                state.y += state.vy;
+                state.angle += state.vAngle;
+
+                const rect = state.el.getBoundingClientRect();
+                if (heavyDropActive && rect.bottom >= floorLimit) {
+                    const overshoot = rect.bottom - floorLimit;
+                    state.y -= overshoot;
+                    if (Math.abs(state.vy) > 3.2) {
+                        triggerScreenShake();
+                        spawnImpactSparks(rect.left + rect.width / 2, floorLimit, '#fbbf24', 10);
+                    }
+                    state.vy = -state.vy * 0.48;
+                    state.vx *= 0.82;
+                    state.vAngle *= 0.65;
+                    state.angle *= 0.7;
+
+                    if (Math.abs(state.vy) < 1.1 && Math.abs(state.vx) < 0.4) {
+                        state.vy = 0;
+                        state.vx = 0;
+                        state.vAngle = 0;
+                        state.physicsActive = false;
+                    }
+                } else if (!heavyDropActive && Math.hypot(state.vx, state.vy) < 0.25) {
+                    state.vx = 0;
+                    state.vy = 0;
+                    state.vAngle = 0;
+                    state.physicsActive = false;
+                }
+
+                applyNodeTransform(state);
+            });
+
+            if (anyMoved) renderCables();
+            requestAnimationFrame(animationLoop);
+        }
+        requestAnimationFrame(animationLoop);
+
+        const dockItems = Array.from(document.querySelectorAll('#osDock .dock-item'));
+        const osDock = document.getElementById('osDock');
+        osDock.addEventListener('pointermove', (e) => {
+            dockItems.forEach(item => {
+                const r = item.getBoundingClientRect();
+                const center = r.left + r.width / 2;
+                const dist = Math.abs(e.clientX - center);
+                const scale = Math.max(1, 1.38 - dist / 140);
+                item.style.transform = `translateY(${-(scale - 1) * 14}px) scale(${scale.toFixed(2)})`;
+            });
+        });
+        osDock.addEventListener('pointerleave', () => {
+            dockItems.forEach(item => {
+                item.style.transform = 'translateY(0px) scale(1)';
+            });
+        });
+
+        const sections = Array.from(document.querySelectorAll('.scroll-section'));
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    document.querySelectorAll('[data-rail]').forEach(dot => {
+                        const circle = dot.querySelector('span:last-child');
+                        if (dot.dataset.rail === id) {
+                            circle.classList.add('bg-sky-400', 'scale-125');
+                            circle.classList.remove('bg-slate-600');
+                        } else {
+                            circle.classList.remove('bg-sky-400', 'scale-125');
+                            circle.classList.add('bg-slate-600');
+                        }
+                    });
+                    document.querySelectorAll('[data-dock]').forEach(btn => {
+                        btn.classList.toggle('border-sky-400', btn.dataset.dock === id);
+                        btn.classList.toggle('text-sky-400', btn.dataset.dock === id);
+                    });
+                }
+            });
+        }, { threshold: 0.35 });
+        sections.forEach(sec => observer.observe(sec));
+
+        const radialToggleBtn = document.getElementById('radialToggleBtn');
+        const radialItems = document.getElementById('radialItems');
+        const radialIcon = document.getElementById('radialIcon');
+        radialToggleBtn.addEventListener('click', () => {
+            const isHidden = radialItems.classList.contains('hidden');
+            radialItems.classList.toggle('hidden', !isHidden);
+            radialItems.classList.toggle('flex', isHidden);
+            radialIcon.className = isHidden ? 'ri-close-fill' : 'ri-flashlight-fill';
+        });
+
+        const demoTemplates = {
+            pos: {
+                title: 'Point of Sale (POS) System — Live Sandbox',
+                url: 'https://brylecordova.github.io/systems/pos-terminal',
+                html: `<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.tailwindcss.com"><\/script></head><body class="bg-slate-950 text-slate-100 p-5 font-sans">
+                <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-4">
+                    <div class="md:col-span-7 space-y-3">
+                        <div class="flex items-center justify-between bg-slate-900 p-3 rounded-xl border border-slate-800">
+                            <span class="font-bold text-sky-400 text-sm">BRYLE POS v4.2 // CASHIER #01</span>
+                            <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Drawer Ready</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5" id="menuGrid"></div>
+                    </div>
+                    <div class="md:col-span-5 bg-slate-900 rounded-2xl border border-slate-800 p-4 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center border-b border-slate-800 pb-2 mb-3">
+                                <span class="font-bold text-sm">Current Order</span>
+                                <button onclick="clearCart()" class="text-xs text-rose-400 hover:underline">Clear</button>
+                            </div>
+                            <div id="cartList" class="space-y-2 text-xs max-h-56 overflow-y-auto"></div>
+                        </div>
+                        <div class="border-t border-slate-800 pt-3 mt-4 space-y-2">
+                            <div class="flex justify-between text-xs text-slate-400"><span>VAT (12%)</span><span id="vatAmt">₱0.00</span></div>
+                            <div class="flex justify-between text-base font-bold text-white"><span>TOTAL</span><span id="totalAmt" class="text-emerald-400">₱0.00</span></div>
+                            <button onclick="checkout()" class="w-full py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs">COMPLETE CHECKOUT &amp; PRINT</button>
+                            <div id="receiptMsg" class="text-center text-xs text-emerald-400 font-mono"></div>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    const items = [
+                        { name: 'Iced Americano', price: 110 },
+                        { name: 'Spanish Latte', price: 145 },
+                        { name: 'Matcha Cream', price: 155 },
+                        { name: 'Butter Croissant', price: 95 },
+                        { name: 'Chicken Pesto', price: 185 },
+                        { name: 'Caramel Waffle', price: 120 }
+                    ];
+                    let cart = [{ name: 'Spanish Latte', price: 145, qty: 1 }];
+                    function renderMenu() {
+                        document.getElementById('menuGrid').innerHTML = items.map((it, i) =>
+                            '<button onclick="addItem('+i+')" class="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-sky-400 text-left transition"><div class="font-semibold text-xs text-white">'+it.name+'</div><div class="text-sky-400 font-mono text-xs mt-1">₱'+it.price+'</div></button>'
+                        ).join('');
+                    }
+                    function addItem(i) {
+                        const found = cart.find(c => c.name === items[i].name);
+                        if (found) found.qty++; else cart.push({ ...items[i], qty: 1 });
+                        renderCart();
+                    }
+                    function clearCart() { cart = []; renderCart(); }
+                    function renderCart() {
+                        const list = document.getElementById('cartList');
+                        if (!cart.length) list.innerHTML = '<div class="text-slate-500">Tap menu items to add...</div>';
+                        else list.innerHTML = cart.map(c => '<div class="flex justify-between bg-slate-950 px-2.5 py-2 rounded-lg"><span>'+c.qty+'x '+c.name+'</span><span class="font-mono text-sky-300">₱'+(c.price*c.qty)+'</span></div>').join('');
+                        const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
+                        document.getElementById('vatAmt').textContent = '₱' + (total * 0.12).toFixed(2);
+                        document.getElementById('totalAmt').textContent = '₱' + total.toFixed(2);
+                    }
+                    function checkout() {
+                        if (!cart.length) return;
+                        document.getElementById('receiptMsg').textContent = 'OR #' + Math.floor(100000 + Math.random()*900000) + ' Printed!';
+                        cart = []; renderCart();
+                    }
+                    renderMenu(); renderCart();
+                <\/script></body></html>`
+            },
+            inventory: {
+                title: 'Inventory Management System — Live Sandbox',
+                url: 'https://brylecordova.github.io/systems/inventory-ledger',
+                html: `<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.tailwindcss.com"><\/script></head><body class="bg-slate-950 text-slate-100 p-5 font-sans">
+                <div class="max-w-4xl mx-auto space-y-4">
+                    <div class="flex flex-wrap justify-between items-center bg-slate-900 p-4 rounded-2xl border border-slate-800 gap-2">
+                        <div><h1 class="font-bold text-emerald-400 text-sm">WAREHOUSE STOCK LEDGER</h1><p class="text-xs text-slate-400">Adjust stock counts to test real-time low-stock triggers</p></div>
+                        <button onclick="restockAll()" class="px-3 py-1.5 rounded-lg bg-emerald-500 text-slate-950 font-bold text-xs">+ Auto-Restock Low Items</button>
+                    </div>
+                    <div id="stockRows" class="space-y-2.5"></div>
+                </div>
+                <script>
+                    const stock = [
+                        { sku: 'NET-01', name: 'Gigabit PoE Switch 24-Port', qty: 18, min: 5 },
+                        { sku: 'POS-08', name: '80mm Thermal Receipt Rolls (Box)', qty: 3, min: 10 },
+                        { sku: 'IOT-14', name: 'Raspberry Pi 5 8GB Board', qty: 12, min: 4 },
+                        { sku: 'CAM-22', name: 'OpenCV USB Wide-Angle Module', qty: 2, min: 6 }
+                    ];
+                    function render() {
+                        document.getElementById('stockRows').innerHTML = stock.map((s, idx) => {
+                            const low = s.qty <= s.min;
+                            return '<div class="p-3.5 rounded-xl bg-slate-900 border '+(low?'border-rose-500/50':'border-slate-800')+' flex items-center justify-between gap-3"><div><div class="text-xs font-mono text-slate-400">'+s.sku+'</div><div class="font-semibold text-sm">'+s.name+'</div></div><div class="flex items-center gap-2"><span class="px-2 py-0.5 rounded text-[11px] font-mono '+(low?'bg-rose-500/20 text-rose-300':'bg-emerald-500/20 text-emerald-300')+'">'+(low?'LOW STOCK':'HEALTHY')+'</span><button onclick="adj('+idx+',-1)" class="w-7 h-7 rounded bg-slate-800 hover:bg-slate-700 font-bold">-</button><span class="w-10 text-center font-mono font-bold">'+s.qty+'</span><button onclick="adj('+idx+',1)" class="w-7 h-7 rounded bg-slate-800 hover:bg-slate-700 font-bold">+</button></div></div>';
+                        }).join('');
+                    }
+                    function adj(i, d) { stock[i].qty = Math.max(0, stock[i].qty + d); render(); }
+                    function restockAll() { stock.forEach(s => { if (s.qty <= s.min) s.qty += 15; }); render(); }
+                    render();
+                <\/script></body></html>`
+            },
+            hris: {
+                title: 'HRIS & Payroll Engine — Live Sandbox',
+                url: 'https://brylecordova.github.io/systems/hris-payroll',
+                html: `<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.tailwindcss.com"><\/script></head><body class="bg-slate-950 text-slate-100 p-5 font-sans">
+                <div class="max-w-3xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <div><h1 class="font-bold text-violet-400 text-sm">HRIS BIOMETRIC DTR &amp; PAYSLIP ENGINE</h1><p class="text-xs text-slate-400">Interactive cut-off computation simulator</p></div>
+                        <button onclick="clockIn()" id="clockBtn" class="px-3.5 py-2 rounded-xl bg-violet-500 text-slate-950 font-bold text-xs">Clock-In DTR Now</button>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800"><label class="text-slate-400 block mb-1">Daily Rate (₱)</label><input id="rate" type="number" value="950" oninput="calc()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white font-mono"></div>
+                        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800"><label class="text-slate-400 block mb-1">Days Worked</label><input id="days" type="number" value="11" oninput="calc()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white font-mono"></div>
+                        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800"><label class="text-slate-400 block mb-1">Overtime Hours</label><input id="ot" type="number" value="4" oninput="calc()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white font-mono"></div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-950 border border-violet-500/30 space-y-1.5 text-xs font-mono">
+                        <div class="flex justify-between"><span class="text-slate-400">Gross Cut-Off Pay:</span><span id="gross" class="text-white">₱0.00</span></div>
+                        <div class="flex justify-between"><span class="text-slate-400">Statutory Deductions (SSS/PHIC/HDMF):</span><span id="ded" class="text-rose-400">-₱680.00</span></div>
+                        <div class="flex justify-between text-sm font-bold pt-2 border-t border-slate-800"><span class="text-violet-300">NET TAKE-HOME PAY:</span><span id="net" class="text-emerald-400">₱0.00</span></div>
+                    </div>
+                    <div id="dtrLog" class="text-xs font-mono text-emerald-400"></div>
+                </div>
+                <script>
+                    function calc() {
+                        const r = Number(document.getElementById('rate').value) || 0;
+                        const d = Number(document.getElementById('days').value) || 0;
+                        const ot = Number(document.getElementById('ot').value) || 0;
+                        const gross = (r * d) + ((r / 8) * 1.25 * ot);
+                        const net = Math.max(0, gross - 680);
+                        document.getElementById('gross').textContent = '₱' + gross.toFixed(2);
+                        document.getElementById('net').textContent = '₱' + net.toFixed(2);
+                    }
+                    function clockIn() {
+                        document.getElementById('dtrLog').textContent = 'Biometric Punch Recorded at ' + new Date().toLocaleTimeString();
+                    }
+                    calc();
+                <\/script></body></html>`
+            },
+            dms: {
+                title: 'Document Management & QR Routing — Live Sandbox',
+                url: 'https://brylecordova.github.io/systems/document-tracker',
+                html: `<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.tailwindcss.com"><\/script></head><body class="bg-slate-950 text-slate-100 p-5 font-sans">
+                <div class="max-w-3xl mx-auto space-y-4">
+                    <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex gap-2">
+                        <input id="docTitle" type="text" placeholder="Enter new memo or voucher title..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                        <button onclick="addDoc()" class="px-4 py-2 rounded-xl bg-amber-400 text-slate-950 font-bold text-xs">Generate QR &amp; Route</button>
+                    </div>
+                    <div id="docList" class="space-y-2.5"></div>
+                </div>
+                <script>
+                    const docs = [
+                        { code: 'QR-2026-901', title: 'ICT Infrastructure Upgrade Proposal', status: 'Approved' },
+                        { code: 'QR-2026-902', title: 'Monthly Server Audit & Backup Log', status: 'In Review' }
+                    ];
+                    function render() {
+                        document.getElementById('docList').innerHTML = docs.map((d, i) =>
+                            '<div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between gap-3"><div><span class="text-[11px] font-mono text-amber-400">'+d.code+'</span><div class="font-semibold text-sm">'+d.title+'</div></div><button onclick="advance('+i+')" class="px-3 py-1 rounded-lg text-xs font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30">'+d.status+' ↻</button></div>'
+                        ).join('');
+                    }
+                    function addDoc() {
+                        const inp = document.getElementById('docTitle');
+                        if (!inp.value.trim()) return;
+                        docs.unshift({ code: 'QR-2026-' + Math.floor(903 + Math.random()*90), title: inp.value.trim(), status: 'Received' });
+                        inp.value = ''; render();
+                    }
+                    function advance(i) {
+                        const flow = ['Received', 'In Review', 'Approved', 'Released'];
+                        docs[i].status = flow[(flow.indexOf(docs[i].status) + 1) % flow.length];
+                        render();
+                    }
+                    render();
+                <\/script></body></html>`
+            },
+            emr: {
+                title: 'Medical Records System (EMR) — Live Sandbox',
+                url: 'https://brylecordova.github.io/systems/clinic-emr',
+                html: `<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.tailwindcss.com"><\/script></head><body class="bg-slate-950 text-slate-100 p-5 font-sans">
+                <div class="max-w-3xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                        <div><span class="text-xs font-mono text-rose-400">PATIENT CHART #PT-4092</span><h1 class="font-bold text-base">Maria Santos • 34F • Blood Type O+</h1></div>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-mono">Vitals Stable</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3 text-center font-mono text-xs">
+                        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800"><span class="text-slate-400 block">Blood Pressure</span><span class="text-emerald-400 text-base font-bold">118 / 76</span></div>
+                        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800"><span class="text-slate-400 block">Heart Rate</span><span class="text-sky-400 text-base font-bold">74 bpm</span></div>
+                        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800"><span class="text-slate-400 block">SpO2</span><span class="text-violet-400 text-base font-bold">99%</span></div>
+                    </div>
+                    <div class="flex gap-2">
+                        <input id="rxInput" type="text" placeholder="Add clinical note or e-prescription..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                        <button onclick="addNote()" class="px-4 py-2 rounded-xl bg-rose-500 text-white font-bold text-xs">Save Record</button>
+                    </div>
+                    <div id="notes" class="space-y-2 text-xs">
+                        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800"><span class="text-rose-400 font-mono">[SOAP]</span> Routine annual checkup completed. Labs normal.</div>
+                    </div>
+                </div>
+                <script>
+                    function addNote() {
+                        const v = document.getElementById('rxInput').value.trim();
+                        if (!v) return;
+                        document.getElementById('notes').insertAdjacentHTML('afterbegin', '<div class="p-3 rounded-xl bg-slate-950 border border-rose-500/30"><span class="text-emerald-400 font-mono">[NEW RX]</span> '+v+'</div>');
+                        document.getElementById('rxInput').value = '';
+                    }
+                <\/script></body></html>`
+            },
+            iot: {
+                title: 'Arduino, Raspberry Pi & OpenCV Telemetry — Live Sandbox',
+                url: 'https://brylecordova.github.io/systems/opencv-iot-telemetry',
+                html: `<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.tailwindcss.com"><\/script></head><body class="bg-slate-950 text-slate-100 p-5 font-sans">
+                <div class="max-w-3xl mx-auto space-y-4">
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+                        <div><span class="text-xs font-mono text-cyan-400">RASPBERRY PI + ARDUINO BRIDGE</span><h1 class="font-bold text-sm">Real-Time OpenCV Vision &amp; Relay Control</h1></div>
+                        <button onclick="toggleRelay()" id="relayBtn" class="px-4 py-2 rounded-xl bg-cyan-400 text-slate-950 font-bold text-xs">GPIO Relay: ON</button>
+                    </div>
+                    <div class="relative h-48 rounded-2xl bg-slate-900 border border-cyan-500/30 overflow-hidden flex items-center justify-center">
+                        <div id="bbox" class="px-4 py-2 border-2 border-emerald-400 bg-emerald-500/10 text-emerald-300 font-mono text-xs transition-all duration-500">
+                            TARGET_LOCKED // CONFIDENCE: 98.7%
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3 text-center font-mono text-xs">
+                        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">Temp: <span id="tVal" class="text-amber-300 font-bold">28.4°C</span></div>
+                        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">Ultrasonic: <span id="uVal" class="text-sky-400 font-bold">42 cm</span></div>
+                        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">FPS: <span class="text-emerald-400 font-bold">60.0</span></div>
+                    </div>
+                </div>
+                <script>
+                    let relay = true;
+                    function toggleRelay() {
+                        relay = !relay;
+                        const b = document.getElementById('relayBtn');
+                        b.textContent = 'GPIO Relay: ' + (relay ? 'ON' : 'OFF');
+                        b.className = relay ? 'px-4 py-2 rounded-xl bg-cyan-400 text-slate-950 font-bold text-xs' : 'px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs';
+                    }
+                    setInterval(() => {
+                        const box = document.getElementById('bbox');
+                        box.style.transform = 'translate(' + ((Math.random()-0.5)*110) + 'px,' + ((Math.random()-0.5)*45) + 'px)';
+                        document.getElementById('tVal').textContent = (27.8 + Math.random()*1.4).toFixed(1) + '°C';
+                        document.getElementById('uVal').textContent = Math.floor(35 + Math.random()*25) + ' cm';
+                    }, 900);
+                <\/script></body></html>`
+            }
+        };
+
+        let currentDemoKey = 'pos';
+        let iframeExpanded = false;
+
+        function openSystemDemo(key, customUrl = null, customTitle = null) {
+            const modal = document.getElementById('iframeModal');
+            const iframe = document.getElementById('demoIframe');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            if (customUrl) {
+                document.getElementById('iframeTitleBadge').textContent = customTitle || 'Live Project Preview';
+                document.getElementById('iframeUrlBar').textContent = customUrl;
+                iframe.removeAttribute('srcdoc');
+                iframe.src = customUrl;
+            } else {
+                currentDemoKey = key;
+                const demo = demoTemplates[key] || demoTemplates.pos;
+                document.getElementById('iframeTitleBadge').textContent = demo.title;
+                document.getElementById('iframeUrlBar').textContent = demo.url;
+                iframe.removeAttribute('src');
+                iframe.srcdoc = demo.html;
+            }
+        }
+
+        function closeIframeModal() {
+            const modal = document.getElementById('iframeModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function reloadIframeDemo() {
+            const iframe = document.getElementById('demoIframe');
+            if (iframe.getAttribute('srcdoc')) {
+                const current = iframe.srcdoc;
+                iframe.srcdoc = '';
+                setTimeout(() => { iframe.srcdoc = current; }, 40);
+            } else if (iframe.src) {
+                iframe.src = iframe.src;
+            }
+        }
+
+        function setIframeViewport(width) {
+            document.getElementById('demoIframe').style.maxWidth = width;
+        }
+
+        function toggleIframeExpand() {
+            const win = document.getElementById('iframeWindow');
+            iframeExpanded = !iframeExpanded;
+            win.classList.toggle('max-w-5xl', !iframeExpanded);
+            win.classList.toggle('h-[86vh]', !iframeExpanded);
+            win.classList.toggle('max-w-full', iframeExpanded);
+            win.classList.toggle('h-[95vh]', iframeExpanded);
+        }
+
+        let allRepos = [];
+        let activeLangFilter = 'ALL';
+
+        async function loadGithubRepos() {
+            const grid = document.getElementById('reposGrid');
+            try {
+                const res = await fetch('https://api.github.com/users/brylecordova/repos?sort=updated&per_page=30');
+                if (!res.ok) throw new Error('GitHub API limit');
+                const data = await res.json();
+                allRepos = data.filter(repo =>
+                    !repo.fork &&
+                    repo.name &&
+                    repo.name.toLowerCase() !== 'brylecordova-portfolio'
+                );
+                buildLanguageFilters();
+                renderRepos();
+            } catch (err) {
+                grid.innerHTML = `<div class="col-span-full glass-panel rounded-2xl p-6 text-center font-mono text-xs text-slate-400">
+                    Unable to load live GitHub feed right now. Visit <a href="https://github.com/brylecordova" target="_blank" class="text-sky-400 underline">github.com/brylecordova</a> directly.
+                </div>`;
+            }
+        }
+
+        function buildLanguageFilters() {
+            const container = document.getElementById('repoLangFilters');
+            const langs = ['ALL', ...new Set(allRepos.map(r => r.language).filter(Boolean))];
+            container.innerHTML = langs.map(lang => `
+                <button type="button" onclick="setRepoLang('${lang}')" class="px-3 py-1.5 rounded-full text-xs font-mono transition-all ${activeLangFilter === lang ? 'bg-sky-400 text-slate-950 font-bold' : 'glass-panel text-slate-300 hover:border-sky-400/50'}">
+                    ${lang}
+                </button>
+            `).join('');
+        }
+
+        function setRepoLang(lang) {
+            activeLangFilter = lang;
+            buildLanguageFilters();
+            renderRepos();
+        }
+
+        function renderRepos() {
+            const grid = document.getElementById('reposGrid');
+            const query = document.getElementById('repoSearchInput').value.trim().toLowerCase();
+            const filtered = allRepos.filter(repo => {
+                const matchesLang = activeLangFilter === 'ALL' || repo.language === activeLangFilter;
+                const matchesText = !query ||
+                    repo.name.toLowerCase().includes(query) ||
+                    (repo.description && repo.description.toLowerCase().includes(query));
+                return matchesLang && matchesText;
+            });
+
+            if (!filtered.length) {
+                grid.innerHTML = '<div class="col-span-full glass-panel rounded-2xl p-6 text-center font-mono text-xs text-slate-400">No matching repositories found.</div>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map(repo => {
+                const hasLive = repo.homepage && repo.homepage.startsWith('http');
+                const safeName = repo.name.replace(/'/g, "\\'");
+                const safeHome = hasLive ? repo.homepage.replace(/'/g, "\\'") : '';
+                return `
+                    <article class="spotlight-card glass-panel rounded-2xl p-5 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex items-start justify-between gap-2">
+                                <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer" class="font-display font-bold text-base text-white hover:text-sky-400 transition-colors break-all">
+                                    ${repo.name}
+                                </a>
+                                <span class="text-xs font-mono text-amber-300 flex items-center gap-1 shrink-0">
+                                    <i class="ri-star-fill"></i> ${repo.stargazers_count}
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-2 line-clamp-3 leading-relaxed">
+                                ${repo.description || 'Custom software repository engineered by Bryle Cordova.'}
+                            </p>
+                        </div>
+                        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2 text-xs font-mono">
+                            <span class="px-2.5 py-0.5 rounded bg-slate-800 text-sky-300">${repo.language || 'Code'}</span>
+                            <div class="flex items-center gap-2">
+                                ${hasLive ? `<button type="button" onclick="openSystemDemo(null, '${safeHome}', '${safeName}')" class="px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500 hover:text-slate-950 transition-colors">Live Iframe</button>` : ''}
+                                <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center gap-1">
+                                    <i class="ri-code-s-slash-line"></i> Source
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        document.getElementById('repoSearchInput').addEventListener('input', renderRepos);
+        loadGithubRepos();
+
+        document.getElementById('terminalForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const input = document.getElementById('terminalInput');
+            const log = document.getElementById('terminalLog');
+            const cmd = input.value.trim().toLowerCase();
+            if (!cmd) return;
+
+            let reply = 'Unknown command. Try: help, drop, shock, link, reset, pos, repos, hire';
+            if (cmd === 'help') reply = 'Commands: drop (gravity), shock (impulse), link (wire mode), reset, pos (demo), repos, hire';
+            else if (cmd === 'drop') { triggerHeavyDrop(); reply = 'Heavy rigid-body gravity engaged.'; }
+            else if (cmd === 'shock') { triggerShockwave(); reply = 'Shockwave pulse emitted.'; }
+            else if (cmd === 'link') { toggleLinkMode(); reply = 'Toggled cable link mode.'; }
+            else if (cmd === 'reset') { resetPlayground(); reply = 'Playground restored.'; }
+            else if (cmd === 'pos') { openSystemDemo('pos'); reply = 'Opening POS system iframe...'; }
+            else if (cmd === 'repos') { document.getElementById('repos').scrollIntoView({ behavior: 'smooth' }); reply = 'Scrolling to GitHub repositories...'; }
+            else if (cmd === 'hire') { document.getElementById('contact').scrollIntoView({ behavior: 'smooth' }); reply = 'Jumping to direct contact...'; }
+
+            log.insertAdjacentHTML('beforeend', `<div class="text-sky-400">$ ${input.value}</div><div>&gt; ${reply}</div>`);
+            log.scrollTop = log.scrollHeight;
+            input.value = '';
+        });
+
+        const commands = [
+            { label: 'Trigger Heavy Drop Gravity', icon: 'ri-meteor-fill', action: () => triggerHeavyDrop() },
+            { label: 'Emit Radial Shockwave Pulse', icon: 'ri-radar-fill', action: () => triggerShockwave() },
+            { label: 'Toggle Node Cable Link Mode', icon: 'ri-node-tree', action: () => toggleLinkMode() },
+            { label: 'Reset Playground Positions & Cables', icon: 'ri-refresh-line', action: () => resetPlayground() },
+            { label: 'Launch POS System Live Iframe', icon: 'ri-store-3-fill', action: () => openSystemDemo('pos') },
+            { label: 'Launch Inventory System Live Iframe', icon: 'ri-archive-drawer-fill', action: () => openSystemDemo('inventory') },
+            { label: 'Launch HRIS & Payroll Live Iframe', icon: 'ri-team-fill', action: () => openSystemDemo('hris') },
+            { label: 'Launch Document Tracker Live Iframe', icon: 'ri-file-shield-2-fill', action: () => openSystemDemo('dms') },
+            { label: 'Launch Medical Records EMR Iframe', icon: 'ri-heart-pulse-fill', action: () => openSystemDemo('emr') },
+            { label: 'Launch Arduino / OpenCV Telemetry Iframe', icon: 'ri-robot-2-fill', action: () => openSystemDemo('iot') },
+            { label: 'Chat on WhatsApp (+63 927 498 8152)', icon: 'ri-whatsapp-fill', action: () => window.open('https://wa.me/639274988152', '_blank') },
+            { label: 'Chat on Telegram (+63 927 498 8152)', icon: 'ri-telegram-fill', action: () => window.open('https://t.me/+639274988152', '_blank') }
+        ];
+
+        function openCommandPalette() {
+            const modal = document.getElementById('cmdModal');
+            const input = document.getElementById('cmdSearchInput');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            input.value = '';
+            renderCommandList('');
+            setTimeout(() => input.focus(), 40);
+        }
+
+        function closeCommandPalette() {
+            const modal = document.getElementById('cmdModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function renderCommandList(filter) {
+            const list = document.getElementById('cmdList');
+            const q = filter.toLowerCase();
+            const matches = commands.filter(c => c.label.toLowerCase().includes(q));
+            list.innerHTML = matches.map((c, idx) => `
+                <button type="button" data-cmd-idx="${idx}" class="w-full px-3.5 py-2.5 rounded-xl hover:bg-sky-500/15 text-left text-xs font-mono text-slate-200 hover:text-sky-300 flex items-center gap-3 transition-colors">
+                    <i class="${c.icon} text-sky-400 text-base"></i>
+                    <span>${c.label}</span>
+                </button>
+            `).join('');
+            list.querySelectorAll('button').forEach((btn, idx) => {
+                btn.addEventListener('click', () => {
+                    closeCommandPalette();
+                    matches[idx].action();
+                });
+            });
+        }
+
+        document.getElementById('cmdTriggerBtn').addEventListener('click', openCommandPalette);
+        document.getElementById('cmdSearchInput').addEventListener('input', (e) => renderCommandList(e.target.value));
+
+        window.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                const modal = document.getElementById('cmdModal');
+                if (modal.classList.contains('hidden')) openCommandPalette();
+                else closeCommandPalette();
+            } else if (e.key === 'Escape') {
+                closeCommandPalette();
+                closeIframeModal();
+            } else if (e.key.toLowerCase() === 'g' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
+                triggerHeavyDrop();
+            }
+        });
+
+        function copyEmailAddress() {
+            const temp = document.createElement('textarea');
+            temp.value = 'cordovabryle@gmail.com';
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            showToast('Copied cordovabryle@gmail.com to clipboard');
+        }
+
+        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const btn = document.getElementById('sendEmailBtn');
+            const feedback = document.getElementById('formFeedback');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="ri-loader-4-line animate-spin"></i> Sending...';
+
+            const formData = new FormData(form);
+            formData.append('_captcha', 'false');
+            formData.append('_template', 'table');
+
+            try {
+                const res = await fetch('https://formsubmit.co/ajax/cordovabryle@gmail.com', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (res.ok) {
+                    feedback.textContent = 'Sent directly to cordovabryle@gmail.com!';
+                    feedback.className = 'text-xs font-mono text-emerald-400';
+                    form.reset();
+                    showToast('Message delivered to Bryle Cordova');
+                } else {
+                    throw new Error('Submission failed');
+                }
+            } catch (err) {
+                feedback.textContent = 'Fallback: Click WhatsApp or Telegram for instant reply.';
+                feedback.className = 'text-xs font-mono text-amber-400';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="ri-send-plane-2-fill"></i> Send Message';
+            }
+        });
+    </script>
+</body>
+</html>
